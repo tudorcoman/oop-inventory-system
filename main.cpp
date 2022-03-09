@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <utility>
+#include <memory>
 #include <vector>
 #include <map>
 
@@ -9,9 +10,7 @@ class Produs {
     std::string nume, categorie;
     double pretCumparare{}, pretVanzare{};
 public:
-    Produs() {
-        *this = Produs(0, "", "", 0.0, 0.0);
-    }
+    Produs() = default;
 
     explicit Produs(int id, std::string nume, std::string categorie, double pretCumparare, double pretVanzare) : id(id), nume(std::move(nume)), categorie(std::move(categorie)), pretCumparare(pretCumparare), pretVanzare(pretVanzare) {}
     friend std::ostream& operator << (std::ostream& os, const Produs& p) {
@@ -54,9 +53,9 @@ public:
 class Angajat {
     std::string first_name, last_name;
     long long cnp;
-    Angajat* manager;
+    std::shared_ptr<Angajat> manager;
 public:
-    explicit Angajat(std::string firstName, std::string lastName, long long int cnp, Angajat* manager): first_name(std::move(firstName)), last_name(std::move(lastName)), cnp(cnp), manager(manager) {}
+    explicit Angajat(std::string firstName, std::string lastName, long long int cnp, std::shared_ptr<Angajat> manager): first_name(std::move(firstName)), last_name(std::move(lastName)), cnp(cnp), manager(std::move(manager)) {}
 
     Angajat(const Angajat& other): first_name(other.first_name), last_name(other.last_name), cnp(other.cnp), manager(other.manager) {
         std::cout << "constr copiere Angajat " << first_name + " " + last_name << "\n";
@@ -85,8 +84,8 @@ public:
         std::cout << "destr Angajat " << first_name + " " + last_name << "\n";
     }
 
-    void setManager(Angajat *mgr) {
-        this->manager = mgr;
+    void setManager(std::shared_ptr<Angajat> mgr) {
+        this->manager = std::move(mgr);
     }
 };
 
@@ -196,13 +195,12 @@ int main() {
     }
 
     Angajat eu = Angajat("Tudor", "Coman", 5000000000000, nullptr); // eu sunt seful
-    Angajat employees[] = {
-            Angajat("Bill", "Gates", 1000000000000, &eu),
-            Angajat("Sundar", "Pichai", 2000000000000, &eu)
-    };
+    std::vector<Angajat> employees;
+    employees.emplace_back("Bill", "Gates", 1000000000000, std::make_shared<Angajat>(eu));
+    employees.emplace_back("Sundar", "Pichai", 2000000000000, std::make_shared<Angajat>(eu));
 
     const Angajat e = employees[1];
-    employees[1].setManager(&employees[0]); // se schimba ierarhia
+    employees[1].setManager(std::make_shared<Angajat>(employees[0])); // se schimba ierarhia
 
     // comparam cele doua versiuni;
     std::cout << e << "\n";
