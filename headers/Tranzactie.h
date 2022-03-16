@@ -6,14 +6,14 @@
 #define OOP_TRANZACTIE_H
 
 #include <iomanip>
+#include <chrono>
 #include "Produs.h"
 
 class Tranzactie {
 public:
     enum Type {IN, OUT};
-
-    explicit Tranzactie(int id, Produs produs, double quantity, Type tip) : id(id), produs(std::move(produs)), quantity(quantity),
-                                                                            tip(tip) {}
+    explicit Tranzactie(int id, Produs produs, double quantity, Type tip, std::chrono::time_point<std::chrono::system_clock> timestamp) : id(id), produs(std::move(produs)), quantity(quantity),
+                                                                            tip(tip), timestamp(timestamp) {}
 
     friend std::ostream& operator << (std::ostream& os, const Tranzactie& tr);
 
@@ -23,7 +23,10 @@ public:
     }
      */
 
+
     [[nodiscard]] const Produs &getProdus() const;
+
+//    const std::chrono::time_point<std::chrono::system_clock> &getTimestamp() const;
 
     [[nodiscard]] double getQuantity() const;
 
@@ -34,6 +37,7 @@ private:
     const Produs produs;
     const double quantity;
     const Type tip;
+    const std::chrono::time_point<std::chrono::system_clock> timestamp;
 };
 
 

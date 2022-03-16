@@ -27,7 +27,8 @@ int main() {
     std::cout << e << "\n";
     std::cout << employees[1] << "\n";
 
-    Tranzactie t = Tranzactie(1, produs_prost, 1.0, Tranzactie::Type::IN); // prima tranzactie
+    Tranzactie t = Tranzactie(1, produs_prost, 1.0, Tranzactie::Type::IN, std::chrono::system_clock::now()); // prima tranzactie
+    std::cout << t << "\n";
     std::cout << d << "\n\n\n";
     d.executaTranzactie(t);
     std::cout << d;

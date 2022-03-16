@@ -6,7 +6,10 @@
 #include "../headers/Tranzactie.h"
 
 std::ostream &operator<<(std::ostream &os, const Tranzactie &tr) {
-    os << "Tranzactia de " << tr.tip << " #" << tr.id << "\n";
+    const std::time_t t_c = std::chrono::system_clock::to_time_t(tr.timestamp);
+    os << "[" << std::put_time(std::localtime(&t_c), "%F %T") << "] "
+    << "Tranzactia de " << ((tr.tip == 0) ? "Intrare" : "Iesire") << " #" << tr.id << "\n";
+
     os << std::fixed << std::showpoint << std::setprecision(2);
     os << tr.quantity << " x " << tr.produs.getNume() << "\n";
     //os << "Detalii produs: " << tr.produs;
@@ -24,6 +27,10 @@ double Tranzactie::getQuantity() const {
 Tranzactie::Type Tranzactie::getTip() const {
     return tip;
 }
+
+//const std::chrono::time_point<std::chrono::system_clock> &Tranzactie::getTimestamp() const {
+//    return timestamp;
+//}
 
 std::ostream& operator<<(std::ostream& os, const Tranzactie::Type tip) {
     switch(tip) {
