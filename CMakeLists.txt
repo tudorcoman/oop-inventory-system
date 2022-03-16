@@ -24,7 +24,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 ###############################################################################
 
 # NOTE: update executable name in .github/workflows/cmake.yml when changing name here
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp headers/Produs.h sources/Produs.cpp headers/Angajat.h sources/Angajat.cpp headers/Tranzactie.h sources/Tranzactie.cpp headers/Depozit.h sources/Depozit.cpp)
 
 ###############################################################################
 
