@@ -10,18 +10,19 @@
 #include <map>
 #include "Produs.h"
 #include "Tranzactie.h"
+#include "Angajat.h"
 
 class Depozit {
     std::string nume;
     std::string adresa;
     std::map<Produs, double> stoc;
     std::vector<Tranzactie> tranzactii;
-
+    Angajat manager;
 public:
-    Depozit(std::string nume, std::string adresa);
+    Depozit(std::string nume, std::string adresa, const Angajat& manager);
 
     explicit Depozit(std::string nume, std::string adresa, std::map<Produs, double> stoc,
-                     std::vector<Tranzactie> tranzactii);
+                     std::vector<Tranzactie> tranzactii, const Angajat& manager);
     // momentan sunt functii neutilizate asa ca le-am comentat pentru a trece Cppcheck:
     /*[[nodiscard]] const std::string &getNume() const {
         return nume;

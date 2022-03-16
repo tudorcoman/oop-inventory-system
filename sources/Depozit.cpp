@@ -12,7 +12,8 @@ void Depozit::executaTranzactie(const Tranzactie &t) {
 
 std::ostream &operator<<(std::ostream &os, const Depozit &d) {
     os << "Depozitul " << d.nume<< "\n"
-       << "Adresa: " << d.adresa << "\n";
+       << "Adresa: " << d.adresa << "\n"
+       << "Administrat de: " << d.manager << "\n";
 
     os << "Stocul la zi: " << "\n";
     for(const auto& it: d.stoc) {
@@ -24,9 +25,9 @@ std::ostream &operator<<(std::ostream &os, const Depozit &d) {
 }
 
 Depozit::Depozit(std::string nume, std::string adresa, std::map<Produs, double> stoc,
-                 std::vector<Tranzactie> tranzactii) : nume(std::move(nume)), adresa(std::move(adresa)), stoc(std::move(stoc)),
-                                                       tranzactii(std::move(tranzactii)) {}
+                 std::vector<Tranzactie> tranzactii, const Angajat& manager) : nume(std::move(nume)), adresa(std::move(adresa)), stoc(std::move(stoc)),
+                                                       tranzactii(std::move(tranzactii)), manager(manager) {}
 
-Depozit::Depozit(std::string nume, std::string adresa) : nume(std::move(nume)), adresa(std::move(adresa)) {}
+Depozit::Depozit(std::string nume, std::string adresa, const Angajat& manager) : nume(std::move(nume)), adresa(std::move(adresa)), manager(manager) {}
 
 

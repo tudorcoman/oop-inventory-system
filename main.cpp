@@ -9,14 +9,13 @@
 using namespace std::string_literals;
 
 int main() {
-    Depozit d = Depozit("fmi", "Strada Academiei nr. 14, sector 1, Bucuresti");
-
     const Produs produs_prost = Produs(73, "produs neprofitabil", "papetarie", 20.0, 10.0);
     if(produs_prost.getPretCumparare() > produs_prost.getPretVanzare()) {
         std::cout << produs_prost << "Nu este profitabil" << "\n";
     }
 
     Angajat eu = Angajat("Tudor", "Coman", 5000000000000, nullptr); // eu sunt seful
+    Depozit d = Depozit("fmi", "Strada Academiei nr. 14, sector 1, Bucuresti", eu);
     std::vector<Angajat> employees;
     employees.emplace_back("Bill", "Gates", 1000000000000, std::make_shared<Angajat>(eu));
     employees.emplace_back("Sundar", "Pichai", 2000000000000, std::make_shared<Angajat>(eu));
