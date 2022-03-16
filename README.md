@@ -23,7 +23,7 @@
 ## Tema 2
 
 #### Cerințe
-- [ ] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
+- [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
 - [ ] moșteniri
   - [ ] funcții virtuale (pure), constructori virtuali (clone)
   - [ ] apelarea constructorului din clasa de bază 
