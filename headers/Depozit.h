@@ -12,6 +12,8 @@
 #include "Tranzactie.h"
 #include "Angajat.h"
 
+typedef std::chrono::time_point<std::chrono::system_clock> Timestamp;
+
 class Depozit {
     std::string nume;
     std::string adresa;
@@ -43,6 +45,11 @@ public:
     void executaTranzactie(const Tranzactie& t);
 
     friend std::ostream& operator << (std::ostream& os, const Depozit& d);
+
+    std::vector<Tranzactie> getTranzactii(const Tranzactie::Type& tip);
+
+    std::vector<Tranzactie> getTranzactii(const Timestamp& left, const Timestamp& right);
+
 };
 
 #endif //OOP_DEPOZIT_H

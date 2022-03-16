@@ -7,6 +7,15 @@
 #include "headers/Depozit.h"
 
 using namespace std::string_literals;
+using namespace std::literals;
+
+template<typename T>
+void afiseazaVector(std::ostream& os, std::vector<T> v) {
+    for(auto elem: v) {
+        os << elem << " ";
+    }
+    os << "\n";
+}
 
 int main() {
     const Produs produs_prost = Produs(73, "produs neprofitabil", "papetarie", 20.0, 10.0);
@@ -32,5 +41,10 @@ int main() {
     std::cout << d << "\n\n\n";
     d.executaTranzactie(t);
     std::cout << d;
+
+    std::cout << "Intrari: "; afiseazaVector<Tranzactie>(std::cout, d.getTranzactii(Tranzactie::Type::IN));
+    std::cout << "Iesiri: "; afiseazaVector<Tranzactie>(std::cout, d.getTranzactii(Tranzactie::Type::OUT));
+    std::cout << "+- 1H: "; afiseazaVector<Tranzactie>(std::cout, d.getTranzactii(std::chrono::system_clock::now() - 1h, std::chrono::system_clock::now() + 1h));
+    std::cout << "Future: ";afiseazaVector<Tranzactie>(std::cout, d.getTranzactii(std::chrono::system_clock::now() + 2h, std::chrono::system_clock::now() + 5h));
     return 0;
 }

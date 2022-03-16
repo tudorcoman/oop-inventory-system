@@ -26,7 +26,7 @@ public:
 
     [[nodiscard]] const Produs &getProdus() const;
 
-//    const std::chrono::time_point<std::chrono::system_clock> &getTimestamp() const;
+    const std::chrono::time_point<std::chrono::system_clock> &getTimestamp() const;
 
     [[nodiscard]] double getQuantity() const;
 

@@ -2,6 +2,7 @@
 // Created by Tudor Coman on 16.03.2022.
 //
 
+#define _CRT_SECURE_NO_WARNINGS
 #include <ostream>
 #include "../headers/Tranzactie.h"
 
@@ -28,9 +29,9 @@ Tranzactie::Type Tranzactie::getTip() const {
     return tip;
 }
 
-//const std::chrono::time_point<std::chrono::system_clock> &Tranzactie::getTimestamp() const {
-//    return timestamp;
-//}
+const std::chrono::time_point<std::chrono::system_clock> &Tranzactie::getTimestamp() const {
+    return timestamp;
+}
 
 std::ostream& operator<<(std::ostream& os, const Tranzactie::Type tip) {
     switch(tip) {
