@@ -30,7 +30,7 @@ Depozit::Depozit(std::string nume, std::string adresa, std::map<Produs, double> 
 
 Depozit::Depozit(std::string nume, std::string adresa, const Angajat& manager) : nume(std::move(nume)), adresa(std::move(adresa)), manager(manager) {}
 
-std::vector<Tranzactie> Depozit::getTranzactii(const Tranzactie::Type &tip) {
+std::vector<Tranzactie> Depozit::getTranzactii(const Tranzactie::Type &tip) const {
     std::vector<Tranzactie> ans;
     std::copy_if(tranzactii.begin(), tranzactii.end(),
                  std::back_inserter(ans),
@@ -38,7 +38,7 @@ std::vector<Tranzactie> Depozit::getTranzactii(const Tranzactie::Type &tip) {
     return ans;
 }
 
-std::vector<Tranzactie> Depozit::getTranzactii(const Timestamp &left, const Timestamp &right) {
+std::vector<Tranzactie> Depozit::getTranzactii(const Timestamp &left, const Timestamp &right) const {
     std::vector<Tranzactie> ans;
     std::copy_if(tranzactii.begin(), tranzactii.end(),
                  std::back_inserter(ans),

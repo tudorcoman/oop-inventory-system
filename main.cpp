@@ -10,8 +10,8 @@ using namespace std::string_literals;
 using namespace std::literals;
 
 template<typename T>
-void afiseazaVector(std::ostream& os, std::vector<T> v) {
-    for(auto elem: v) {
+void afiseazaVector(std::ostream& os, const std::vector<T>& v) {
+    for(const auto& elem: v) {
         os << elem << " ";
     }
     os << "\n";
