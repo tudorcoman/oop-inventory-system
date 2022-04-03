@@ -5,13 +5,12 @@
 #include "../headers/Angajat.h"
 #include <iostream>
 #include <memory>
+#include <utility>
 #include "cpprest/json.h"
 
 Angajat::Angajat(const Angajat &other) : first_name(other.first_name), last_name(other.last_name), cnp(other.cnp), manager(other.manager) {
 //    std::cout << "constr copiere Angajat " << first_name + " " + last_name << "\n";
 }
-
-Angajat::Angajat(std::string firstName, std::string lastName, long long int cnp, std::shared_ptr<Angajat> manager) : first_name(std::move(firstName)), last_name(std::move(lastName)), cnp(cnp), manager(std::move(manager)) {}
 
 std::ostream &operator<<(std::ostream &os, const Angajat &a) {
     os << "Angajat " << a.first_name << " " << a.last_name << "\n"
@@ -59,11 +58,10 @@ web::json::value Angajat::getJson() const {
     return json;
 }
 
-Angajat Angajat::fromJson(web::json::value obj) {
-    const std::string first_name = obj[U("first_name")].as_string();
-    const std::string last_name = obj[U("last_name")].as_string();
-    const long long cnp = obj[U("cnp")].as_number().to_int64();
-    return Angajat(first_name, last_name, cnp, std::shared_ptr<Angajat>());
+void Angajat::fromJson(web::json::value obj) {
+    this->first_name = obj[U("first_name")].as_string();
+    this->last_name = obj[U("last_name")].as_string();
+    this->cnp = obj[U("cnp")].as_number().to_int64();
 }
 
 bool Angajat::operator==(const Angajat &rhs) const {
@@ -91,3 +89,6 @@ long long int Angajat::getCnp() const {
 const std::shared_ptr<Angajat> &Angajat::getManager() const {
     return manager;
 }
+
+Angajat::Angajat(std::string firstName, std::string lastName, long long int cnp, std::shared_ptr<Angajat> manager ):
+    first_name(std::move(firstName)), last_name(std::move(lastName)), cnp(cnp), manager(std::move(manager)) { }

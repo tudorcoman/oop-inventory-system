@@ -6,7 +6,7 @@
 #define OOP_CONTROLLER_H
 
 #include "../../service/headers/HTTPListener.h"
-#include "../../core/headers/Repository.h"
+#include "../../core/headers/CrudRepository.h"
 
 using namespace std::placeholders;
 

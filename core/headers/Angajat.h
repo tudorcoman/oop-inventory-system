@@ -8,15 +8,16 @@
 #include <string>
 #include <memory>
 #include "cpprest/json.h"
+#include "JsonEntity.h"
 
-class Angajat {
+class Angajat: public JsonEntity {
     std::string first_name, last_name;
-    long long cnp;
+    long long cnp{};
     std::shared_ptr<Angajat> manager;
 
-    web::json::value getSimpleJson() const;
+    [[nodiscard]] web::json::value getSimpleJson() const;
 public:
-    explicit Angajat(std::string firstName, std::string lastName, long long int cnp, std::shared_ptr<Angajat> manager);
+    Angajat(std::string firstName="", std::string lastName="", long long int cnp=0, std::shared_ptr<Angajat> manager=std::shared_ptr<Angajat>());
 
     Angajat(const Angajat& other);
 
@@ -32,9 +33,9 @@ public:
 
     void setManager(std::shared_ptr<Angajat> mgr);
 
-    [[nodiscard]] web::json::value getJson() const;
+    web::json::value getJson() const override;
 
-    static Angajat fromJson(web::json::value obj);
+    void fromJson(web::json::value obj) override;
 
     [[nodiscard]] const std::string &getFirstName() const;
 

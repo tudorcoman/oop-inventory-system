@@ -6,7 +6,7 @@
 
 void AngajatRepository::_fetch_objects() {
     if (!fetched_objects) {
-        result res = Repository<Angajat, int>::_run_select("SELECT * FROM " + getTable());
+        result res = CrudRepository<Angajat, int>::_run_select("SELECT * FROM " + getTable());
         for (result::const_iterator it = res.begin(); it != res.end(); it++) {
             int id = it[0].as<int>();
             int mgr_id = (it[4].is_null()) ? 0 : it[4].as<int>();
@@ -45,9 +45,9 @@ bool AngajatRepository::opCreate(const Angajat &a, int manager_id) {
         sprintf(buffer, afla_id_query_format.c_str(), a.getCnp(), a.getFirstName().c_str(), a.getLastName().c_str());
         const std::string afla_id_query = std::string(buffer);
 
-        Repository<Angajat, int>::_run_working_query(query);
+        CrudRepository<Angajat, int>::_run_working_query(query);
 
-        result r = Repository::_run_select(afla_id_query);
+        result r = CrudRepository::_run_select(afla_id_query);
         const int id = r.begin()[0].as<int>();
         angajati.insert({id, a});
 
@@ -63,7 +63,7 @@ std::vector<Angajat> AngajatRepository::opRetrieve(std::map<std::string, std::st
     }
     const std::string where_clause = _build_where_clause(filters);
     const std::string query = "SELECT id FROM " + getTable() + " " + where_clause;
-    const result res = Repository::_run_select(query);
+    const result res = CrudRepository::_run_select(query);
 
     std::vector<Angajat> answer;
     for (result::const_iterator it = res.begin(); it != res.end(); it++) {
@@ -87,7 +87,7 @@ bool AngajatRepository::opUpdate(const int &id, const Angajat &a, int manager_id
         sprintf(buffer, query_format.c_str(), a.getFirstName().c_str(), a.getLastName().c_str(), a.getCnp(), manager_id, id);
         const std::string query = std::string(buffer);
 
-        Repository<Angajat, int>::_run_working_query(query);
+        CrudRepository<Angajat, int>::_run_working_query(query);
 
         return true;
     } catch(const std::exception& e) {
@@ -102,7 +102,7 @@ bool AngajatRepository::opDelete(const int &id) {
     }
     try {
         const std::string query = "DELETE FROM " + getTable() + " WHERE id = " + std::to_string(id);
-        Repository<Angajat, int>::_run_working_query(query);
+        CrudRepository<Angajat, int>::_run_working_query(query);
         return true;
     } catch(const std::exception& e) {
         return false;
@@ -110,11 +110,11 @@ bool AngajatRepository::opDelete(const int &id) {
 }
 
 AngajatRepository::AngajatRepository() :
-    Repository<Angajat, int>("angajati", std::vector<TableField>{TableField("id", TableField::INT),
-                                                   TableField("first_name", TableField::TEXT),
-                                                   TableField("last_name", TableField::TEXT),
-                                                   TableField("cnp", TableField::LONG),
-                                                   TableField("manager_id", TableField::INT)}) {}
+        CrudRepository<Angajat, int>("angajati", std::vector<TableField>{TableField("id", TableField::INT),
+                                                                         TableField("first_name", TableField::TEXT),
+                                                                         TableField("last_name", TableField::TEXT),
+                                                                         TableField("cnp", TableField::LONG),
+                                                                         TableField("manager_id", TableField::INT)}) {}
 
 Angajat AngajatRepository::getById(const int &id) {
     if(!fetched_objects) {

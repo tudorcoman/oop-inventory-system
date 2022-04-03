@@ -30,3 +30,47 @@ double Produs::getPretVanzare() const {
 bool Produs::operator<(const Produs &other) const {
     return id < other.id;
 }
+
+const std::string &Produs::getCategorie() const {
+    return categorie;
+}
+
+int Produs::getId() const {
+    return id;
+}
+
+bool Produs::operator==(const Produs &rhs) const {
+    return id == rhs.id &&
+           nume == rhs.nume &&
+           categorie == rhs.categorie &&
+           pretCumparare == rhs.pretCumparare &&
+           pretVanzare == rhs.pretVanzare;
+}
+
+bool Produs::operator!=(const Produs &rhs) const {
+    return !(rhs == *this);
+}
+
+web::json::value Produs::getJson() const {
+    using namespace web::json;
+    value json;
+    json[U("id")] = value::number(id);
+    json[U("name")] = value::string(U(nume));
+    json[U("category")] = value::string(U(categorie));
+    json[U("buying_price")] = value::number(pretCumparare);
+    json[U("selling_price")] = value::number(pretVanzare);
+    return json;
+}
+
+void Produs::fromJson(web::json::value obj) {
+    if (obj.has_integer_field("id"))
+        this->id = obj[U("id")].as_integer();
+    else
+        this->id = 0;
+    this->nume = obj[U("name")].as_string();
+    this->categorie = obj[U("category")].as_string();
+    this->pretCumparare = obj[U("buying_price")].as_double();
+    this->pretVanzare = obj[U("selling_price")].as_double();
+}
+
+Produs::~Produs() { }

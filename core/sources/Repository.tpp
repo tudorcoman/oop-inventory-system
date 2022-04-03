@@ -3,35 +3,36 @@
 //
 
 #include "../headers/Repository.h"
+#include "../../infra/headers/SQLRepository.h"
 
-template<typename T, typename... Types>
-result Repository<T, Types...>::_run_select(const std::string &sql) {
+template<typename T>
+result Repository<T>::_run_select(const std::string &sql) {
     return nontransaction(SQLRepository::getInstance()->conn).exec(sql);
 }
 
-template<typename T, typename... Types>
-void Repository<T, Types...>::_run_working_query(const std::string &query) {
+template<typename T>
+void Repository<T>::_run_working_query(const std::string &query) {
     work W(SQLRepository::getInstance()->conn);
     W.exec(query);
     W.commit();
 }
 
-template<typename T, typename... Types>
-Repository<T, Types...>::Repository(std::string table, std::vector<TableField> fields): table(std::move(table)), fields(std::move(fields)), fetched_objects(false) {
+template<typename T>
+Repository<T>::Repository(std::string table, std::vector<TableField> fields): table(std::move(table)), fields(std::move(fields)), fetched_objects(false) {
 }
 
-template<typename T, typename... Types>
-const std::string &Repository<T, Types...>::getTable() const {
+template<typename T>
+const std::string &Repository<T>::getTable() const {
     return table;
 }
 
-template<typename T, typename... Types>
-const std::vector<TableField> &Repository<T, Types...>::getFields() const {
+template<typename T>
+const std::vector<TableField> &Repository<T>::getFields() const {
     return fields;
 }
 
-template<typename T, typename... Types>
-std::string Repository<T, Types...>::_build_where_clause(const std::map<std::string, std::string>& filters) const {
+template<typename T>
+std::string Repository<T>::_build_where_clause(const std::map<std::string, std::string>& filters) const {
     std::string where_clause = "WHERE ";
     for(const auto& it: filters) {
         auto x = std::find(getFields().begin(), getFields().end(), it.first);

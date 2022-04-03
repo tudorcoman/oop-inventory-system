@@ -6,9 +6,11 @@
 #define OOP_WEBSERVICE_H
 
 #include "AngajatController.h"
+#include "ProdusController.h"
 
 class WebService {
     AngajatController angajatController;
+    ProdusController produsController;
     HTTPListener::RequestHandler requestHandler;
     HTTPListener listener;
 

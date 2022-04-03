@@ -6,21 +6,15 @@
 
 void AngajatController::handle_get(const http_request &req) {
     std::map<std::string, std::string> http_get_vars = uri::split_query(req.request_uri().query());
-
-    const std::vector<Angajat> angajati = angajatRepository.opRetrieve(http_get_vars);
-    json::value output = json::value::array();
-
-    for(unsigned int i = 0; i < angajati.size(); i ++) {
-        output[i] = angajati[i].getJson();
-    }
-
+    auto output = Utilities::getJsonArray<Angajat>(&angajatRepository, http_get_vars);
     req.reply(status_codes::OK, output);
 }
 
 void AngajatController::handle_post(const http_request &req) {
     pplx::task<web::json::value> jsonTask = req.extract_json();
     web::json::value json = jsonTask.get();
-    Angajat a = Angajat::fromJson(json);
+    Angajat a;
+    a.fromJson(json);
     int mgr_id = -1;
 
     try {
@@ -53,7 +47,8 @@ void AngajatController::handle_post(const http_request &req) {
 void AngajatController::handle_delete(const http_request &req) {
     pplx::task<web::json::value> jsonTask = req.extract_json();
     web::json::value json = jsonTask.get();
-    Angajat a = Angajat::fromJson(json);
+    Angajat a;
+    a.fromJson(json);
     int mgr_id;
 
     try {

@@ -6,6 +6,7 @@
 
 WebService::WebService() :
     angajatController(AngajatController("/angajat")),
+    produsController(ProdusController("/produs")),
     requestHandler(_create_request_handler()),
     listener(HTTPListener("http://localhost:8081", "/api", requestHandler)) { }
 
@@ -18,5 +19,6 @@ void WebService::run() {
 
 HTTPListener::RequestHandler WebService::_create_request_handler() {
     return HTTPListener::RequestHandler()
-            .support(angajatController.getRequestHandler());
+            .support(angajatController.getRequestHandler())
+            .support(produsController.getRequestHandler());
 }

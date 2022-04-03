@@ -6,14 +6,13 @@
 #define OOP_REPOSITORY_H
 
 #include <string>
-#include <pqxx/pqxx>
 #include "TableField.h"
-#include <utility>
-#include "../../infra/headers/SQLRepository.h"
+#include <vector>
+#include "pqxx/pqxx"
 
 using namespace pqxx;
 
-template<typename T, typename... Types>
+template<typename T>
 class Repository {
     std::string table;
     std::vector<TableField> fields;
@@ -29,12 +28,11 @@ protected:
 public:
     Repository(std::string table, std::vector<TableField> fields);
 
-    virtual bool opCreate(const T& object, Types... args)  = 0;
     virtual std::vector<T> opRetrieve(std::map<std::string, std::string> filters) = 0;
-    virtual bool opUpdate(const int& id, const T& object, Types... args) = 0;
     virtual bool opDelete(const int& id) = 0;
     virtual T getById(const int& id) = 0;
 };
 
 #include "../sources/Repository.tpp"
+
 #endif //OOP_REPOSITORY_H

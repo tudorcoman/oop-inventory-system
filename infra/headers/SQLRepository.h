@@ -19,7 +19,7 @@ class SQLRepository {
 
     SQLRepository();
 
-    template<typename T, typename... Args> friend class Repository;
+    template<typename T> friend class Repository;
 public:
     static SQLRepository *getInstance();
 

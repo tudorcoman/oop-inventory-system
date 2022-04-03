@@ -7,9 +7,9 @@
 
 
 #include "../../core/headers/Angajat.h"
-#include "../../core/headers/Repository.h"
+#include "../../core/headers/CrudRepository.h"
 
-class AngajatRepository: public Repository<Angajat, int> {
+class AngajatRepository: public CrudRepository<Angajat, int> {
     void _fetch_objects() override;
     std::map<int, Angajat> angajati;
 public:
