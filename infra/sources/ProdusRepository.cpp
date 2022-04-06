@@ -50,7 +50,7 @@ bool ProdusRepository::opCreate(const Produs &p) {
 
         CrudRepository<Produs>::_run_working_query(query);
 
-        result r = CrudRepository::_run_select(afla_id_query_format);
+        result r = CrudRepository::_run_select(afla_id_query);
         const int id = r.begin()[0].as<int>();
 
         Produs nou = Produs(id, p.getNume(), p.getCategorie(), p.getPretCumparare(), p.getPretVanzare());

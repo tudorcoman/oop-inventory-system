@@ -40,5 +40,14 @@ public:
         }
         return output;
     }
+
+    static std::string getStringFromDate(boost::posix_time::ptime timestamp) {
+        std::stringstream stream;
+        boost::posix_time::time_facet* facet = new boost::posix_time::time_facet();
+        facet->format("%Y-%m-%d %T");
+        stream.imbue(std::locale(std::locale::classic(), facet));
+        stream << timestamp;
+        return stream.str();
+    }
 };
 #endif //OOP_UTILITIES_H

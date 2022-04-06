@@ -14,33 +14,29 @@
 
 using Timestamp = std::chrono::time_point<std::chrono::system_clock>;
 
-class Depozit {
+class Depozit: public JsonEntity {
     std::string nume;
     std::string adresa;
     std::map<Produs, double> stoc;
     std::vector<Tranzactie> tranzactii;
-    Angajat manager;
+    std::shared_ptr<Angajat> manager;
 public:
-    Depozit(std::string nume, std::string adresa, const Angajat& manager);
+    Depozit();
+
+    Depozit(std::string nume, std::string adresa, std::shared_ptr<Angajat> manager);
 
     explicit Depozit(std::string nume, std::string adresa, std::map<Produs, double> stoc,
-                     std::vector<Tranzactie> tranzactii, const Angajat& manager);
-    // momentan sunt functii neutilizate asa ca le-am comentat pentru a trece Cppcheck:
-    /*[[nodiscard]] const std::string &getNume() const {
-        return nume;
-    }
+                     std::vector<Tranzactie> tranzactii, std::shared_ptr<Angajat> manager);
 
-    [[nodiscard]] const std::string &getAdresa() const {
-        return adresa;
-    }
+    [[nodiscard]] const std::string &getNume() const;
 
-    [[nodiscard]] const std::map<Produs, double> &getStoc() const {
-        return stoc;
-    }
+    [[nodiscard]] const std::string &getAdresa() const;
 
-    [[nodiscard]] const std::vector<Tranzactie> &getTranzactii() const {
-        return tranzactii;
-    }*/
+    [[nodiscard]] const std::map<Produs, double> &getStoc() const;
+
+    [[nodiscard]] const std::vector<Tranzactie> &getTranzactii() const;
+
+    const std::shared_ptr<Angajat> &getManager() const;
 
     void executaTranzactie(const Tranzactie& t);
 
@@ -48,8 +44,12 @@ public:
 
     std::vector<Tranzactie> getTranzactii(const Tranzactie::Type& tip) const;
 
-    std::vector<Tranzactie> getTranzactii(const Timestamp& left, const Timestamp& right) const;
+    std::vector<Tranzactie> getTranzactii(const boost::posix_time::ptime &left, const boost::posix_time::ptime &right) const;
 
+    web::json::value getJson() const override;
+    void fromJson(web::json::value obj) override;
+
+    void setManager(const std::shared_ptr<Angajat> &manager);
 };
 
 #endif //OOP_DEPOZIT_H

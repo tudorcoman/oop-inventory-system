@@ -12,6 +12,7 @@
 
 class ProdusController: public Controller {
     ProdusRepository produsRepository;
+    friend class WebService;
 public:
     explicit ProdusController(const std::string& path);
     void handle_get(const http_request& req) override;

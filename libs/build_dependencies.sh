@@ -40,6 +40,6 @@ install_postgresql(){
   (cd "$postgresqlBuildDir" && make)
 }
 
-#mkdir -p "$libDir"
-#install_cpprestsdk
+mkdir -p "$libDir"
+install_cpprestsdk
 install_postgresql

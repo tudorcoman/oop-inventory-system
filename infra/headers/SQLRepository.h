@@ -21,6 +21,8 @@ class SQLRepository {
 
     template<typename T> friend class Repository;
 public:
+    SQLRepository(const SQLRepository&) = delete;
+    SQLRepository& operator =(const SQLRepository&) = delete;
     static SQLRepository *getInstance();
 
 };

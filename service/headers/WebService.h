@@ -7,10 +7,15 @@
 
 #include "AngajatController.h"
 #include "ProdusController.h"
+#include "DepozitController.h"
+#include "TranzactieController.h"
 
 class WebService {
     AngajatController angajatController;
     ProdusController produsController;
+    DepozitController depozitController;
+    TranzactieController tranzactieController;
+
     HTTPListener::RequestHandler requestHandler;
     HTTPListener listener;
 

@@ -12,6 +12,7 @@
 
 class AngajatController: public Controller {
     AngajatRepository angajatRepository;
+    friend class WebService;
 public:
     explicit AngajatController(const std::string& path);
     void handle_get(const http_request& req) override;

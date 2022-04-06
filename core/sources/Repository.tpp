@@ -41,6 +41,7 @@ std::string Repository<T>::_build_where_clause(const std::map<std::string, std::
         } else {
             where_clause += it.first + "=";
             switch(x->getTip()) {
+                case TableField::DATE:
                 case TableField::TEXT: where_clause += "'" + it.second + "'"; break;
                 default: where_clause += it.second; break;
             }

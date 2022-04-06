@@ -9,7 +9,7 @@
 
 class TableField {
 public:
-    enum TYPE{INT, LONG, TEXT, DOUBLE};
+    enum TYPE{INT, LONG, TEXT, DOUBLE, DATE};
 
     TableField(const std::string &name, TYPE tip);
 
