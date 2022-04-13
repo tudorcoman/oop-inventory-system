@@ -4,6 +4,7 @@ project(oop)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(Boost_USE_MULTITHREADED TRUE)
 
 # Configure required libraries ...
 if(UNIX) # Darwing or Linux
