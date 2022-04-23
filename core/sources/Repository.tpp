@@ -33,8 +33,9 @@ const std::vector<TableField> &Repository<T>::getFields() const {
 
 template<typename T>
 std::string Repository<T>::_build_where_clause(const std::map<std::string, std::string>& filters) const {
-    std::string where_clause = "WHERE ";
+    std::vector<std::string> where_clauses;
     for(const auto& it: filters) {
+        std::string where_clause;
         auto x = std::find(getFields().begin(), getFields().end(), it.first);
         if(x == getFields().end()) {
             throw std::runtime_error("Illegal field");
@@ -42,12 +43,16 @@ std::string Repository<T>::_build_where_clause(const std::map<std::string, std::
             where_clause += it.first + "=";
             switch(x->getTip()) {
                 case TableField::DATE:
-                case TableField::TEXT: where_clause += "'" + it.second + "'"; break;
-                default: where_clause += it.second; break;
+                case TableField::TEXT: where_clause += SQLRepository::getInstance()->conn.quote(it.second); break;
+                default: where_clause += std::all_of(it.second.begin(), it.second.end(), ::isdigit) ? it.second : "-1"; break; // Thank you https://stackoverflow.com/questions/8888748/how-to-check-if-given-c-string-or-char-contains-only-digits
             }
-            where_clause += " AND ";
+            where_clauses.push_back(where_clause);
         }
     }
-    for(int i = 0; i < 5; i++) where_clause.pop_back(); // removing last " AND "
-    return where_clause;
+
+    std::string whereClause = boost::algorithm::join(where_clauses, " AND ");
+    if (!whereClause.empty()) {
+        whereClause = "WHERE " + whereClause;
+    }
+    return whereClause;
 }
