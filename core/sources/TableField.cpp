@@ -4,10 +4,9 @@
 
 #include "../headers/TableField.h"
 
-TableField::TableField(const std::string &name, TableField::TYPE tip) : name(name), tip(tip) {}
+#include <utility>
 
-TableField::~TableField() {
-}
+TableField::TableField(std::string name, TableField::TYPE tip) : name(std::move(name)), tip(tip) {}
 
 const std::string &TableField::getName() const {
     return name;

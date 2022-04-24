@@ -73,4 +73,16 @@ void Produs::fromJson(web::json::value obj) {
     this->pretVanzare = obj[U("selling_price")].as_double();
 }
 
-Produs::~Produs() { }
+
+Produs &Produs::operator=(Produs other) {
+    swap(*this, other);
+    return *this;
+}
+
+void swap(Produs &p1, Produs &p2) {
+    std::swap(p1.id, p2.id);
+    std::swap(p1.nume, p2.nume);
+    std::swap(p1.categorie, p2.categorie);
+    std::swap(p1.pretCumparare, p2.pretCumparare);
+    std::swap(p1.pretVanzare, p2.pretVanzare);
+}

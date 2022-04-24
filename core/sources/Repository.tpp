@@ -56,3 +56,16 @@ std::string Repository<T>::_build_where_clause(const std::map<std::string, std::
     }
     return whereClause;
 }
+
+//template<typename T>
+//Repository<T> &Repository<T>::operator=(Repository<T> other) {
+//    swap(*this, other);
+//    return *this;
+//}
+//
+//template<typename T>
+//void swap(Repository<T>& r1, Repository<T>& r2) {
+//    std::swap(r1.table, r2.table);
+//    std::swap(r1.fields, r2.fields);
+//    std::swap(r1.fetched_objects, r2.fetched_objects);
+//}

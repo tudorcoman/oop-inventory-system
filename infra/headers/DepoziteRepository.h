@@ -16,7 +16,7 @@ class DepoziteRepository: public CrudRepository<Depozit> {
     AngajatRepository angajatRepository;
     friend class DepozitController;
 public:
-    DepoziteRepository(AngajatRepository angajatRepository);
+    explicit DepoziteRepository(AngajatRepository  angajatRepository);
 
     bool opCreate(const Depozit& d) override;
     std::vector<Depozit> opRetrieve(std::map<std::string, std::string> filters) override;
@@ -24,6 +24,9 @@ public:
     bool opDelete(const int& id) override;
     Depozit getById(const int& id) override;
     int findDepozit(const Depozit& d);
+
+    DepoziteRepository& operator = (const DepoziteRepository& other);
+    ~DepoziteRepository() = default;
 };
 
 

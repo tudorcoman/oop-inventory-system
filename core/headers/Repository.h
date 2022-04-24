@@ -31,6 +31,9 @@ public:
     virtual std::vector<T> opRetrieve(std::map<std::string, std::string> filters) = 0;
     virtual bool opDelete(const int& id) = 0;
     virtual T getById(const int& id) = 0;
+
+//    friend void swap(Repository<T>& r1, Repository<T>& r2);
+//    Repository<T>& operator = (Repository<T> other);
 };
 
 #include "../sources/Repository.tpp"

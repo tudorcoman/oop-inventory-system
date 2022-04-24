@@ -69,4 +69,4 @@ void DepozitController::handle_delete(const http_request &req) {
     }
 }
 
-DepozitController::DepozitController(const std::string &path, AngajatRepository angajatRepository): Controller(path), depoziteRepository(std::move(angajatRepository)) { }
+DepozitController::DepozitController(const std::string &path, const AngajatRepository& angajatRepository): Controller(path), depoziteRepository(angajatRepository) { }

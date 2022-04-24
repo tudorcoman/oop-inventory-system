@@ -99,4 +99,17 @@ void Depozit::setManager(const std::shared_ptr<Angajat> &mgr) {
     this->manager = mgr;
 }
 
+Depozit &Depozit::operator=(Depozit other) {
+    swap(*this, other);
+    return *this;
+}
+
+void swap(Depozit &d1, Depozit &d2) {
+    std::swap(d1.nume, d2.nume);
+    std::swap(d1.adresa, d2.adresa);
+    std::swap(d1.stoc, d2.stoc);
+    std::swap(d1.tranzactii, d2.tranzactii);
+    std::swap(d1.manager, d2.manager);
+}
+
 

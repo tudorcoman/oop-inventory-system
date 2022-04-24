@@ -17,15 +17,17 @@ class Angajat: public JsonEntity {
 
     [[nodiscard]] web::json::value getSimpleJson() const;
 public:
-    Angajat(std::string firstName="", std::string lastName="", long long int cnp=0, std::shared_ptr<Angajat> manager=std::shared_ptr<Angajat>());
+    explicit Angajat(std::string firstName="", std::string lastName="", long long int cnp=0, std::shared_ptr<Angajat> manager=std::shared_ptr<Angajat>());
 
     Angajat(const Angajat& other);
 
     friend std::ostream& operator << (std::ostream& os, const Angajat& a);
 
-    Angajat& operator =(const Angajat& other);
+    friend void swap(Angajat& obj1, Angajat& obj2);
 
-    ~Angajat();
+    Angajat& operator =(Angajat other);
+
+    ~Angajat() override = default;
 
     bool operator==(const Angajat &rhs) const;
 
@@ -33,7 +35,7 @@ public:
 
     void setManager(std::shared_ptr<Angajat> mgr);
 
-    web::json::value getJson() const override;
+    [[nodiscard]] web::json::value getJson() const override;
 
     void fromJson(web::json::value obj) override;
 

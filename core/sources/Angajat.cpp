@@ -8,9 +8,7 @@
 #include <utility>
 #include "cpprest/json.h"
 
-Angajat::Angajat(const Angajat &other) : first_name(other.first_name), last_name(other.last_name), cnp(other.cnp), manager(other.manager) {
-//    std::cout << "constr copiere Angajat " << first_name + " " + last_name << "\n";
-}
+Angajat::Angajat(const Angajat &other) : first_name(other.first_name), last_name(other.last_name), cnp(other.cnp), manager(other.manager) { }
 
 std::ostream &operator<<(std::ostream &os, const Angajat &a) {
     os << "Angajat " << a.first_name << " " << a.last_name << "\n"
@@ -22,17 +20,9 @@ std::ostream &operator<<(std::ostream &os, const Angajat &a) {
     return os;
 }
 
-Angajat &Angajat::operator=(const Angajat &other) {
-    first_name = other.first_name;
-    last_name = other.last_name;
-    manager = other.manager;
-    cnp = other.cnp;
-//    std::cout << "op= Angajat " << first_name + " " + last_name << "\n";
+Angajat &Angajat::operator=(Angajat other) {
+    std::swap(*this, other);
     return *this;
-}
-
-Angajat::~Angajat() {
-//    std::cout << "destr Angajat " << first_name + " " + last_name << "\n";
 }
 
 void Angajat::setManager(std::shared_ptr<Angajat> mgr) {
@@ -92,3 +82,10 @@ const std::shared_ptr<Angajat> &Angajat::getManager() const {
 
 Angajat::Angajat(std::string firstName, std::string lastName, long long int cnp, std::shared_ptr<Angajat> manager ):
     first_name(std::move(firstName)), last_name(std::move(lastName)), cnp(cnp), manager(std::move(manager)) { }
+
+void swap(Angajat& obj1, Angajat& obj2) {
+    std::swap(obj1.first_name, obj2.first_name);
+    std::swap(obj1.last_name, obj2.last_name);
+    std::swap(obj1.cnp, obj2.cnp);
+    std::swap(obj1.manager, obj2.manager);
+}

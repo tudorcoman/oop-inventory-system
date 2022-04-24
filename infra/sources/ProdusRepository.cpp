@@ -119,3 +119,9 @@ Produs ProdusRepository::getById(const int &id) {
     }
     throw std::runtime_error("ID does not exist");
 }
+
+ProdusRepository &ProdusRepository::operator=(const ProdusRepository &other) {
+    CrudRepository<Produs>::operator = (other);
+    produse = other.produse;
+    return *this;
+}

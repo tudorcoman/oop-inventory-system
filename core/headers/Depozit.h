@@ -12,8 +12,6 @@
 #include "Tranzactie.h"
 #include "Angajat.h"
 
-using Timestamp = std::chrono::time_point<std::chrono::system_clock>;
-
 class Depozit: public JsonEntity {
     std::string nume;
     std::string adresa;
@@ -36,20 +34,25 @@ public:
 
     [[nodiscard]] const std::vector<Tranzactie> &getTranzactii() const;
 
-    const std::shared_ptr<Angajat> &getManager() const;
+    [[nodiscard]] const std::shared_ptr<Angajat> &getManager() const;
+
+    friend void swap(Depozit& d1, Depozit& d2);
+    Depozit& operator = (Depozit other);
 
     void executaTranzactie(const Tranzactie& t);
 
     friend std::ostream& operator << (std::ostream& os, const Depozit& d);
 
-    std::vector<Tranzactie> getTranzactii(const Tranzactie::Type& tip) const;
+    [[nodiscard]] std::vector<Tranzactie> getTranzactii(const Tranzactie::Type& tip) const;
 
-    std::vector<Tranzactie> getTranzactii(const boost::posix_time::ptime &left, const boost::posix_time::ptime &right) const;
+    [[nodiscard]] std::vector<Tranzactie> getTranzactii(const boost::posix_time::ptime &left, const boost::posix_time::ptime &right) const;
 
-    web::json::value getJson() const override;
+    [[nodiscard]] web::json::value getJson() const override;
     void fromJson(web::json::value obj) override;
 
     void setManager(const std::shared_ptr<Angajat> &manager);
+
+    ~Depozit() override = default;
 };
 
 #endif //OOP_DEPOZIT_H

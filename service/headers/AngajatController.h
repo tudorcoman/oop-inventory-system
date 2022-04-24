@@ -18,6 +18,7 @@ public:
     void handle_get(const http_request& req) override;
     void handle_post(const http_request& req) override;
     void handle_delete(const http_request& req) override;
+    AngajatController& operator = (const AngajatController& other) = default;
 };
 
 

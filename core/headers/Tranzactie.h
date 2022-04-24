@@ -12,7 +12,7 @@
 class Tranzactie: public JsonEntity {
 public:
     enum Type {IN, OUT};
-    explicit Tranzactie(int id, Produs produs, double quantity, Type tip, boost::posix_time::ptime timestamp) : id(id), produs(std::move(produs)), quantity(quantity),
+    explicit Tranzactie(int id, const Produs& produs, double quantity, Type tip, boost::posix_time::ptime timestamp) : id(id), produs(produs), quantity(quantity),
                                                                             tip(tip), timestamp(timestamp) {}
 
     friend std::ostream& operator << (std::ostream& os, const Tranzactie& tr);
@@ -21,13 +21,13 @@ public:
 
     [[nodiscard]] const Produs &getProdus() const;
 
-    const boost::posix_time::ptime &getTimestamp() const;
+    [[nodiscard]] const boost::posix_time::ptime &getTimestamp() const;
 
     [[nodiscard]] double getQuantity() const;
 
     [[nodiscard]] Type getTip() const;
 
-    web::json::value getJson() const override;
+    [[nodiscard]] web::json::value getJson() const override;
 
     void fromJson(web::json::value obj) override;
 
@@ -35,7 +35,8 @@ public:
 
     bool operator!=(const Tranzactie &rhs) const;
 
-//    void setProdus(const Produs &produs);
+    Tranzactie& operator = (const Tranzactie &other) = default;
+
 
 private:
     int id;

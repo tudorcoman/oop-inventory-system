@@ -35,11 +35,14 @@ public:
 
     bool operator!=(const Produs &rhs) const;
 
-    web::json::value getJson() const override;
+    [[nodiscard]] web::json::value getJson() const override;
 
     void fromJson(web::json::value obj) override;
 
-    virtual ~Produs();
+    ~Produs() override = default;
+
+    friend void swap(Produs& p1, Produs& p2);
+    Produs& operator = (Produs other);
 };
 
 #endif //OOP_PRODUS_H

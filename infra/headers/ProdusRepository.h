@@ -21,6 +21,8 @@ public:
     bool opDelete(const int& id) override;
     Produs getById(const int& id) override;
 
+    ProdusRepository& operator = (const ProdusRepository& other);
+    ~ProdusRepository() = default;
 };
 
 

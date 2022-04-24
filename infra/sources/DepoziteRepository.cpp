@@ -20,7 +20,7 @@ void DepoziteRepository::_fetch_objects() {
     }
 }
 
-DepoziteRepository::DepoziteRepository(AngajatRepository  angajatRepository) : CrudRepository<Depozit>("depozite", std::vector<TableField> {TableField("id", TableField::INT),
+DepoziteRepository::DepoziteRepository(AngajatRepository angajatRepository) : CrudRepository<Depozit>("depozite", std::vector<TableField> {TableField("id", TableField::INT),
                                                                                                                                             TableField("nume", TableField::TEXT),
                                                                                                                                             TableField("adresa", TableField::TEXT),
                                                                                                                                             TableField("manager", TableField::INT)}),
@@ -127,4 +127,11 @@ int DepoziteRepository::findDepozit(const Depozit &d) {
         if (it.second.getAdresa() == d.getAdresa() && it.second.getNume() == d.getNume())
             return it.first;
     return -1;
+}
+
+DepoziteRepository &DepoziteRepository::operator=(const DepoziteRepository &other) {
+    CrudRepository<Depozit>::operator =(other);
+    depozite = other.depozite;
+    angajatRepository = other.angajatRepository;
+    return *this;
 }

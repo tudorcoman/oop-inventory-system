@@ -11,17 +11,19 @@ class TableField {
 public:
     enum TYPE{INT, LONG, TEXT, DOUBLE, DATE};
 
-    TableField(const std::string &name, TYPE tip);
+    TableField(std::string name, TYPE tip);
 
     [[nodiscard]] const std::string &getName() const;
 
     [[nodiscard]] TYPE getTip() const;
 
-    virtual ~TableField();
+    virtual ~TableField() = default;
 
     bool operator==(const std::string &rhs) const;
 
     bool operator!=(const std::string &rhs) const;
+
+    TableField& operator = (const TableField& other) = default;
 
 private:
     std::string name;

@@ -9,9 +9,9 @@
 
 class JsonEntity {
 public:
-    virtual web::json::value getJson() const = 0;
+    [[nodiscard]] virtual web::json::value getJson() const = 0;
     virtual void fromJson(web::json::value obj) = 0;
-    virtual ~JsonEntity() { }
+    virtual ~JsonEntity() = default;
 };
 
 

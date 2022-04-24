@@ -13,7 +13,7 @@ using namespace std::placeholders;
 class Controller {
     std::string path;
 public:
-    Controller(const std::string &path) : path(path) {}
+    explicit Controller(const std::string &path) : path(path) {}
 
     virtual HTTPListener::RequestHandler getRequestHandler() {
         std::function<void(http_request)> fp_get = std::bind(&Controller::handle_get, this, _1);
