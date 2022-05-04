@@ -112,4 +112,9 @@ void swap(Depozit &d1, Depozit &d2) {
     std::swap(d1.manager, d2.manager);
 }
 
+std::shared_ptr<JsonEntity> Depozit::clone() const {
+    return std::make_shared<Depozit>(*this);
+}
+
+
 

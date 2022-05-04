@@ -28,12 +28,12 @@ protected:
 public:
     Repository(std::string table, std::vector<TableField> fields);
 
+    virtual std::shared_ptr<Repository<T>> clone() const = 0;
     virtual std::vector<T> opRetrieve(std::map<std::string, std::string> filters) = 0;
     virtual bool opDelete(const int& id) = 0;
     virtual T getById(const int& id) = 0;
 
-//    friend void swap(Repository<T>& r1, Repository<T>& r2);
-//    Repository<T>& operator = (Repository<T> other);
+    virtual ~Repository() = default;
 };
 
 #include "../sources/Repository.tpp"

@@ -18,6 +18,7 @@ class DepoziteRepository: public CrudRepository<Depozit> {
 public:
     explicit DepoziteRepository(AngajatRepository  angajatRepository);
 
+    [[nodiscard]] std::shared_ptr<Repository<Depozit>> clone() const override;
     bool opCreate(const Depozit& d) override;
     std::vector<Depozit> opRetrieve(std::map<std::string, std::string> filters) override;
     bool opUpdate(const int& id, const Depozit& d) override;

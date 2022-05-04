@@ -70,3 +70,7 @@ void DepozitController::handle_delete(const http_request &req) {
 }
 
 DepozitController::DepozitController(const std::string &path, const AngajatRepository& angajatRepository): Controller(path), depoziteRepository(angajatRepository) { }
+
+std::shared_ptr<Controller> DepozitController::clone() const {
+    return std::make_shared<DepozitController>(*this);
+}

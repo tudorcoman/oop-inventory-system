@@ -27,9 +27,11 @@ public:
                         .support(methods::DEL, path, fp_delete);
     }
 
+    virtual std::shared_ptr<Controller> clone() const = 0;
     virtual void handle_get(const http_request& req) = 0;
     virtual void handle_post(const http_request& req) = 0;
     virtual void handle_delete(const http_request& req) = 0;
+    virtual ~Controller() = default;
 };
 
 

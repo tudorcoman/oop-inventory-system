@@ -21,6 +21,7 @@ public:
 
     Angajat(const Angajat& other);
 
+    [[nodiscard]] std::shared_ptr<JsonEntity> clone() const override;
     friend std::ostream& operator << (std::ostream& os, const Angajat& a);
 
     friend void swap(Angajat& obj1, Angajat& obj2);

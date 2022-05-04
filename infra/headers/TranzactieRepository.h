@@ -21,13 +21,16 @@ class TranzactieRepository: public CrudRepository<Tranzactie, int> {
 public:
     TranzactieRepository(DepoziteRepository depoziteRepository, ProdusRepository produsRepository);
 
+    [[nodiscard]] std::shared_ptr<Repository> clone() const override;
+
     bool opCreate(const Tranzactie& t, int depozit_id) override;
     std::vector<Tranzactie> opRetrieve(std::map<std::string, std::string> filters) override;
     bool opUpdate(const int& id, const Tranzactie& t, int depozit_id) override;
     bool opDelete(const int& id) override;
     Tranzactie getById(const int& id) override;
 
-    TranzactieRepository& operator = (const TranzactieRepository& other);
+    TranzactieRepository& operator = (const TranzactieRepository& other) = default;
+    ~TranzactieRepository() override = default;
 };
 
 

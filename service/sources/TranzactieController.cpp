@@ -56,3 +56,7 @@ void TranzactieController::handle_delete(const http_request &req) {
         req.reply(status_codes::NotFound, "Tranzactia cu id-ul respectiv nu exista");
     }
 }
+
+std::shared_ptr<Controller> TranzactieController::clone() const {
+    return std::make_shared<TranzactieController>(*this);
+}

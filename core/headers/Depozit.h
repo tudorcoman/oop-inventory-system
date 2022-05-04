@@ -26,6 +26,8 @@ public:
     explicit Depozit(std::string nume, std::string adresa, std::map<Produs, double> stoc,
                      std::vector<Tranzactie> tranzactii, std::shared_ptr<Angajat> manager);
 
+    [[nodiscard]] std::shared_ptr<JsonEntity> clone() const override;
+
     [[nodiscard]] const std::string &getNume() const;
 
     [[nodiscard]] const std::string &getAdresa() const;

@@ -71,6 +71,10 @@ bool Tranzactie::operator!=(const Tranzactie &rhs) const {
     return !(rhs == *this);
 }
 
+std::shared_ptr<JsonEntity> Tranzactie::clone() const {
+    return std::make_shared<Tranzactie>(*this);
+}
+
 //void Tranzactie::setProdus(const Produs &produs) {
 //    Tranzactie::produs = produs;
 //}

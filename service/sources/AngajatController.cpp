@@ -68,3 +68,7 @@ void AngajatController::handle_delete(const http_request &req) {
 }
 
 AngajatController::AngajatController(const std::string& path): Controller(path) { }
+
+std::shared_ptr<Controller> AngajatController::clone() const {
+    return std::make_shared<AngajatController>(*this);
+}

@@ -135,3 +135,7 @@ DepoziteRepository &DepoziteRepository::operator=(const DepoziteRepository &othe
     angajatRepository = other.angajatRepository;
     return *this;
 }
+
+std::shared_ptr<Repository<Depozit>> DepoziteRepository::clone() const {
+    return std::make_shared<DepoziteRepository>(*this);
+}

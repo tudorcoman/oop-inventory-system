@@ -11,6 +11,7 @@ class JsonEntity {
 public:
     [[nodiscard]] virtual web::json::value getJson() const = 0;
     virtual void fromJson(web::json::value obj) = 0;
+    virtual std::shared_ptr<JsonEntity> clone() const = 0;
     virtual ~JsonEntity() = default;
 };
 

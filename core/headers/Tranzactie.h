@@ -17,6 +17,8 @@ public:
 
     friend std::ostream& operator << (std::ostream& os, const Tranzactie& tr);
 
+    [[nodiscard]] std::shared_ptr<JsonEntity> clone() const override;
+
     [[nodiscard]] int getId() const;
 
     [[nodiscard]] const Produs &getProdus() const;

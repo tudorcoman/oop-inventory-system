@@ -25,7 +25,7 @@
 #### Cerințe
 - [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
 - [ ] moșteniri
-  - [ ] funcții virtuale (pure), constructori virtuali (clone)
+  - [x] funcții virtuale (pure), constructori virtuali (clone)
   - [x] apelarea constructorului din clasa de bază 
   - [x] smart pointers
   - [ ] `dynamic_cast`
@@ -44,7 +44,7 @@
 - [x] 2 șabloane de proiectare (design patterns)
 - [x] o funcție șablon (template) cu sens; minim 2 instanțieri
 - [x] o clasă șablon cu sens; minim 2 instanțieri
-- [ ] o specializare pe funcție/clasă șablon
+- [x] o specializare pe funcție/clasă șablon
 - [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
 ## Resurse

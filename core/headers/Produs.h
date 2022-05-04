@@ -19,6 +19,7 @@ public:
     explicit Produs(int id, std::string nume, std::string categorie, double pretCumparare, double pretVanzare);
     friend std::ostream& operator << (std::ostream& os, const Produs& p);
 
+    [[nodiscard]] std::shared_ptr<JsonEntity> clone() const override;
     [[nodiscard]] int getId() const;
 
     [[nodiscard]] const std::string &getNume() const;

@@ -37,8 +37,6 @@ public:
 //    void support(const method& method, const std::string &path, const std::function<void(http_request)>& handler);
 
     pplx::task<void> open();
-
-    HTTPListener& operator = (const HTTPListener& other);
 };
 
 #endif //OOP_HTTPLISTENER_H

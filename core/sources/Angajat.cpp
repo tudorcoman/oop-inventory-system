@@ -89,3 +89,7 @@ void swap(Angajat& obj1, Angajat& obj2) {
     std::swap(obj1.cnp, obj2.cnp);
     std::swap(obj1.manager, obj2.manager);
 }
+
+std::shared_ptr<JsonEntity> Angajat::clone() const {
+    return std::make_shared<Angajat>(*this);
+}

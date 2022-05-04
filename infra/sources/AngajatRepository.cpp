@@ -134,3 +134,7 @@ int AngajatRepository::findAngajat(const Angajat &a) {
             return it.first;
     return -1;
 }
+
+std::shared_ptr<Repository<Angajat>> AngajatRepository::clone() const {
+    return std::make_shared<AngajatRepository>(*this);
+}

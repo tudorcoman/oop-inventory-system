@@ -15,12 +15,16 @@ class AngajatRepository: public CrudRepository<Angajat, int> {
 public:
     AngajatRepository();
 
+    [[nodiscard]] std::shared_ptr<Repository> clone() const override;
     bool opCreate(const Angajat& a, int manager_id) override;
     std::vector<Angajat> opRetrieve(std::map<std::string, std::string> filters) override;
     bool opUpdate(const int& id, const Angajat& a, int manager_id) override;
     bool opDelete(const int& id) override;
     Angajat getById(const int& id) override;
     [[nodiscard]] int findAngajat(const Angajat& a);
+
+    AngajatRepository& operator = (const AngajatRepository& other) = default;
+    ~AngajatRepository() override = default;
 };
 
 

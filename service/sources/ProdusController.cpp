@@ -55,3 +55,7 @@ void ProdusController::handle_delete(const http_request &req) {
         req.reply(status_codes::NotFound, "Produsul cu id-ul respectiv nu exista");
     }
 }
+
+std::shared_ptr<Controller> ProdusController::clone() const {
+    return std::make_shared<ProdusController>(*this);
+}

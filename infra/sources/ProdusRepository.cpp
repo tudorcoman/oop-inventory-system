@@ -125,3 +125,7 @@ ProdusRepository &ProdusRepository::operator=(const ProdusRepository &other) {
     produse = other.produse;
     return *this;
 }
+
+std::shared_ptr<Repository<Produs>> ProdusRepository::clone() const {
+    return std::make_shared<ProdusRepository>(*this);
+}

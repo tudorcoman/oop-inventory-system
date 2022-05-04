@@ -141,10 +141,14 @@ std::vector<Tranzactie> TranzactieRepository::_build_from_result(const result &r
     return ans;
 }
 
-TranzactieRepository &TranzactieRepository::operator = (const TranzactieRepository& other) {
-    CrudRepository<Tranzactie, int>::operator =(other);
-    tranzactii = other.tranzactii;
-    depoziteRepository = other.depoziteRepository;
-    produsRepository = other.produsRepository;
-    return *this;
+//TranzactieRepository &TranzactieRepository::operator = (TranzactieRepository other) {
+//    CrudRepository<Tranzactie, int>::operator =(other);
+//    std::swap(tranzactii, other.tranzactii);
+//    std::swap(depoziteRepository, other.depoziteRepository);
+//    std::swap(produsRepository, other.produsRepository);
+//    return *this;
+//}
+
+std::shared_ptr<Repository<Tranzactie>> TranzactieRepository::clone() const {
+    return std::make_shared<TranzactieRepository>(*this);
 }

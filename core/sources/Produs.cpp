@@ -86,3 +86,7 @@ void swap(Produs &p1, Produs &p2) {
     std::swap(p1.pretCumparare, p2.pretCumparare);
     std::swap(p1.pretVanzare, p2.pretVanzare);
 }
+
+std::shared_ptr<JsonEntity> Produs::clone() const {
+    return std::make_shared<Produs>(*this);
+}

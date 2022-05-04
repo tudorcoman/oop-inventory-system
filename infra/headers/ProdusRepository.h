@@ -15,6 +15,8 @@ class ProdusRepository: public CrudRepository<Produs> {
 public:
     ProdusRepository();
 
+    [[nodiscard]] std::shared_ptr<Repository<Produs>> clone() const override;
+
     bool opCreate(const Produs& p) override;
     std::vector<Produs> opRetrieve(std::map<std::string, std::string> filters) override;
     bool opUpdate(const int& id, const Produs& p) override;
@@ -22,7 +24,7 @@ public:
     Produs getById(const int& id) override;
 
     ProdusRepository& operator = (const ProdusRepository& other);
-    ~ProdusRepository() = default;
+    ~ProdusRepository() override = default;
 };
 
 
