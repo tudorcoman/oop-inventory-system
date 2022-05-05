@@ -2,10 +2,10 @@ name: C++ CI
 
 on:
   push:
-    branches: [main] # NOTE: replace/update with appropriate branch name(s)
+    branches: [main] 
     tags: ['*']
   pull_request:
-    branches: [main] # NOTE: replace/update with appropriate branch name(s)
+    branches: [main] 
 
 jobs:
   build:
@@ -22,7 +22,13 @@ jobs:
     env:
       CC: ${{ matrix.c }}
       CXX: ${{ matrix.cxx }}
+      BOOST_LINK: ${{ matrix.boost_link }}
+      BOOST_TOOLSET: ${{ matrix.boost_toolset }}
+      BOOST_USE_STATIC: ${{ matrix.boost_use_static }}
+      BOOST_LIBS: --with-atomic --with-chrono --with-date_time --with-filesystem --with-random --with-regex --with-system --with-thread
+      CMAKE_GENERATOR: ${{ matrix.cmake_generator }}
       BUILD_TYPE: Debug
+      BUILD_SHARED_LIBS: ${{ matrix.build_shared_libs }}
 
     strategy:
       fail-fast: false
@@ -32,51 +38,73 @@ jobs:
             c: clang-11
             cxx: clang++-11
             name: Ubuntu 20.04 Clang 11
-            # The flag CMAKE_EXPORT_COMPILE_COMMANDS generates compile_commands.json
-            # which is used by cppcheck and clang-tidy
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            # This env runs cppcheck and sanitizers
+            boost_link: static
+            boost_toolset: clang
+            boost_use_static: ON
+            build_shared_libs: OFF
 
           - os: ubuntu-20.04
-            c: clang-12
-            cxx: clang++-12
-            name: Ubuntu 20.04 Clang 12
-            cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-            # This env runs clang-tidy and sanitizers
+            c: clang-10
+            cxx: clang++-10
+            name: Ubuntu 20.04 Clang 10
+            # cmake_flags:
+            boost_link: static
+            boost_toolset: clang
+            boost_use_static: ON
+            build_shared_libs: OFF
 
           - os: ubuntu-20.04
             c: gcc-10
             cxx: g++-10
             name: Ubuntu 20.04 GCC 10
             # cmake_flags:
-            # This env runs valgrind
+            boost_link: static
+            boost_toolset: gcc
+            boost_use_static: ON
+            build_shared_libs: OFF
 
           - os: macos-11
             c: clang
             cxx: clang++
             name: macOS 11 Apple Clang 13
             # cmake_flags:
+            boost_link: static
+            boost_toolset: clang
+            boost_use_static: ON
+            build_shared_libs: OFF
 
-          - os: macos-11
-            c: gcc-11
-            cxx: g++-11
-            name: macOS 11 GCC 11
-            # cmake_flags:
+          # - os: macos-11
+          #   c: gcc-11
+          #   cxx: g++-11
+          #   name: macOS 11 GCC 11
+          #   # cmake_flags:
+          #   boost_link: static
+          #   boost_toolset: gcc
+          #   boost_use_static: ON
+          #   build_shared_libs: OFF
 
           - os: windows-2022
             c: cl
             cxx: cl
             name: Windows 2022 MSVC 19.30
             # cmake_flags:
+            boost_link: shared
+            boost_toolset: msvc
+            boost_use_static: OFF
+            build_shared_libs: ON
 
-          - os: windows-2022
-            c: gcc
-            cxx: g++
-            name: Windows 2022 GCC 10
-            # cmake_flags:
-            cmake_generator: Ninja
-            # Ninja is faster
-            # other generator: "\"MinGW Makefiles\""
+          # - os: windows-2022
+          #   c: gcc
+          #   cxx: g++
+          #   name: Windows 2022 GCC 10
+          #   # cmake_flags:
+          #   cmake_generator: Ninja
+          #   # other generator: "\"MinGW Makefiles\""
+          #   boost_link: shared
+          #   boost_toolset: gcc
+          #   boost_use_static: OFF
+          #   build_shared_libs: ON
 
     steps:
       - uses: actions/checkout@v2
@@ -86,30 +114,11 @@ jobs:
           echo $GITHUB_WORKSPACE
           mkdir $GITHUB_WORKSPACE/artifacts
 
-      # Common Linux dependencies
-      # - name: Install Linux Dependencies
-      #   if: runner.os == 'Linux'
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install ...
-
-      - name: Install clang-tidy and libc++ (Linux Clang 12)
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
+      - name: Install Linux Dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install clang-tidy libc++-12-dev libc++abi-12-dev
-
-      - name: Install ninja libc++ (Linux Clang 11)
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build libc++-11-dev libc++abi-11-dev
-
-      - name: Install valgrind
-        if: runner.os == 'Linux' && matrix.cxx == 'g++-10'
-        run: |
-          sudo apt-get update
-          sudo apt-get install valgrind
+          sudo apt-get install clang-tidy valgrind
 
       - name: Cache tools
         uses: actions/cache@v2
@@ -117,7 +126,7 @@ jobs:
         id: cache-tools
         with:
           path: tools
-          key: tools-cppcheck-2.6-clang-11
+          key: tools
 
       - name: Build tools
         if: runner.os == 'Linux' && matrix.cxx == 'clang++-11' && steps.cache-tools.outputs.cache-hit != 'true'
@@ -140,19 +149,6 @@ jobs:
           cd tools/cppcheck-2.6
           sudo cmake --install build
 
-      # Uncomment when using external dependencies so they will be cached
-      # - name: Cache deps
-      #   uses: actions/cache@v2
-      #   id: cache-deps
-      #   # make the key depend on the dependency version
-      #   with:
-      #     path: |
-      #       build/_deps
-      #     key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}
-
-      # NOTE: GH Actions does not allow updating the cache yet
-      # Using the workaround found here: https://github.com/actions/cache/issues/171
-      # Since this cache is small, it should not fill the cache too much
       - name: Cache Ninja deps
         uses: actions/cache@v2
         if: matrix.cmake_generator == 'Ninja'
@@ -161,8 +157,7 @@ jobs:
           path: |
             build/.ninja_deps
             build/.ninja_log
-          key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-${{ hashFiles('CMakeLists.txt') }}
-          restore-keys: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache-
+          key: ${{ matrix.os }}-${{ matrix.cxx }}-ninja-cache
 
       - name: Cache MinGW
         uses: actions/cache@v2
@@ -170,23 +165,51 @@ jobs:
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         with:
           path: gcc
-          key: ${{ runner.os }}-gcc-11.2-ucrt-r5
+          key: ${{ runner.os }}-gcc-10
 
       - name: Download toolchain (MinGW)
         uses: suisei-cn/actions-download-file@v1
         id: downloadgcc
         if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
-        # NOTE: replace with another version if this one does not work
-        # For more versions, see https://winlibs.com or
-        # https://github.com/brechtsanders/winlibs_mingw/releases/
+        # replace with another version from https://winlibs.com if this one does not work
         with:
-          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/11.2.0-9.0.0-ucrt-r5/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64ucrt-9.0.0-r5.7z"
+          url: "https://github.com/brechtsanders/winlibs_mingw/releases/download/11.2.0-9.0.0-ucrt-r4/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64ucrt-9.0.0-r4.7z"
           target: compiler
 
       - name: Install toolchain (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++' && steps.cache-mingw.outputs.cache-hit != 'true'
         run: |
-          7z x compiler/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64ucrt-9.0.0-r5.7z -ogcc
+          7z x compiler/winlibs-x86_64-posix-seh-gcc-11.2.0-mingw-w64ucrt-9.0.0-r4.7z -ogcc
+
+
+      - name: Cache deps
+        uses: actions/cache@v2
+        id: cache-deps
+        # make this depend on the dependency version
+        with:
+          path: |
+            libs
+          key: cache-${{ matrix.cmake_generator }}-${{ matrix.os }}-${{ matrix.cxx }}
+
+      - name: Build/install deps
+        if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os != 'Windows'
+        run: |
+          PATH="$(pwd)/gcc/mingw64/bin:$PATH"
+          cd libs
+          chmod +x ./build_deps.sh
+          ./build_deps.sh
+
+      - name: Build/install deps (Windows)
+        if: steps.cache-deps.outputs.cache-hit != 'true' && runner.os == 'Windows'
+        run: |
+          # TODO https://github.com/openssl/openssl/blob/master/.github/workflows/windows.yml
+          BOOST_LIBS="--with-date_time --with-regex --with-system"
+          OPENSSL_ROOT_DIR="C:/Strawberry/c/lib/"
+          PATH="$(pwd)/gcc/mingw64/bin:$PATH"
+          cd libs
+          chmod +x ./build_deps.sh
+          ./build_deps.sh
+
 
       - name: Configure CMake (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
@@ -206,7 +229,7 @@ jobs:
             ${{ matrix.cmake_flags }}
 
       - name: Build
-        # Execute the build using N jobs (-jN)
+        # Execute the build using N jobs (-jN). You can specify a specific target with "--target <NAME>"
         run: cmake --build build --config $BUILD_TYPE -j6
 
       - name: Install
@@ -224,54 +247,32 @@ jobs:
         run: cppcheck --enable=all --project=build/compile_commands.json -ibuild --suppress='*:build/*' --suppress=missingIncludeSystem --suppress=unmatchedSuppression --error-exitcode=1
 
       - name: Clang-tidy
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
         # config from https://gist.github.com/jfm535/7581ccadbd539303d8bed2f46f973108
         run: |
-          # clang-tidy is not able to follow symbolic links: https://bugs.llvm.org/show_bug.cgi?id=47460
-          # need to use | as separator because / is used in paths
-          sed -i "s|$(which clang++-12)|$(realpath $(which clang++-12))|g" build/compile_commands.json
-
           cat build/compile_commands.json |
             jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
             grep -v "/build/_deps/" |       # ignore external dependencies
             xargs clang-tidy -p build
 
-      - name: Setup memory sanitizer
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11' && steps.cache-tools.outputs.cache-hit != 'true'
-        run: |
-          cd tools
-          git clone --depth=1 https://github.com/llvm/llvm-project
-          cd llvm-project
-          mkdir build; cd build
-          sudo ln -s -f /usr/bin/clang-11 /usr/bin/clang
-          sudo ln -s -f /usr/bin/clang++-11 /usr/bin/clang++
-          CC=clang-11 CXX=clang++-11 cmake -GNinja ../llvm \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DLLVM_ENABLE_PROJECTS="libcxx;libcxxabi" \
-            -DCMAKE_C_COMPILER=clang \
-            -DCMAKE_CXX_COMPILER=clang++ \
-            -DLLVM_USE_SANITIZER=MemoryWithOrigins \
-            -DCMAKE_BUILD_WITH_INSTALL_RPATH=true
-          cmake --build . -j6 -- cxx cxxabi
-
       - name: Sanitizers
-        # run one sanitizer for each OS to avoid building extra binaries;
+        # run one sanitizer for each OS to avoid extra binaries;
         # memory on Linux clang, address on macOS clang
         # if: runner.os != 'Windows'
         if: startsWith(matrix.cxx, 'clang++')
+        # NOTE: update executable name if it is changed in CMakeLists.txt
         # detect_leaks is not supported on macOS
         # env:
         # ASAN_OPTIONS: detect_leaks=1
-        # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
-          cat date.txt | ./artifacts/bin/oop
+          cat date.txt | ./artifacts/bin/proj
 
       - name: Valgrind
         if: runner.os == 'Linux' && matrix.cxx == 'g++-10'
         # NOTE: update executable name if it is changed in CMakeLists.txt
         run: |
           # remove --show-leak-kinds=all --track-origins=yes if there are many leaks in external libs
-          cat date.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/oop
+          cat date.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/proj
 
       - name: Move artifacts
         run: |
