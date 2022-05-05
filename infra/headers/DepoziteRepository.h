@@ -16,7 +16,7 @@ class DepoziteRepository: public CrudRepository<Depozit> {
     AngajatRepository angajatRepository;
     friend class DepozitController;
 public:
-    explicit DepoziteRepository(AngajatRepository  angajatRepository);
+    explicit DepoziteRepository(const AngajatRepository&  angajatRepository);
 
     [[nodiscard]] std::shared_ptr<Repository<Depozit>> clone() const override;
     bool opCreate(const Depozit& d) override;

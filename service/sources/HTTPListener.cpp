@@ -27,7 +27,6 @@ void HTTPListener::handle_req(const http_request &message, const std::string& ty
     handle_request(message, matching.at(type));
 }
 
-
 HTTPListener::HTTPListener(const std::string &host, const std::string &url, const RequestHandler& requestHandler) : host(host), url(url) {
     const std::map<std::string, method> matching = {
             {"GET", methods::GET},
@@ -47,10 +46,6 @@ HTTPListener::HTTPListener(const std::string &host, const std::string &url, cons
         listener.support(tip.second, fp);
     }
 }
-
-//void HTTPListener::support(const method &method, const std::string &path, const std::function<void(http_request)> &handler) {
-//    handlers[make_pair(path, method)] = handler;
-//}
 
 pplx::task<void> HTTPListener::open() {
     return listener.open();

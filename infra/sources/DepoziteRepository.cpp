@@ -20,11 +20,11 @@ void DepoziteRepository::_fetch_objects() {
     }
 }
 
-DepoziteRepository::DepoziteRepository(AngajatRepository angajatRepository) : CrudRepository<Depozit>("depozite", std::vector<TableField> {TableField("id", TableField::INT),
+DepoziteRepository::DepoziteRepository(const AngajatRepository& angajatRepository) : CrudRepository<Depozit>("depozite", std::vector<TableField> {TableField("id", TableField::INT),
                                                                                                                                             TableField("nume", TableField::TEXT),
                                                                                                                                             TableField("adresa", TableField::TEXT),
                                                                                                                                             TableField("manager", TableField::INT)}),
-                                                                                angajatRepository(std::move(angajatRepository)) { }
+                                                                                angajatRepository(angajatRepository) { }
 
 bool DepoziteRepository::opCreate(const Depozit &d) {
     if(!fetched_objects) {
@@ -115,7 +115,7 @@ Depozit DepoziteRepository::getById(const int &id) {
         _fetch_objects();
     }
     if(!depozite.contains(id))
-        throw std::runtime_error("ID does not exist");
+        throw IdNotFoundException("DepoziteRespository");
     return depozite.at(id);
 }
 

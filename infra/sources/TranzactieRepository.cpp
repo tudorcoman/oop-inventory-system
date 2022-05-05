@@ -120,7 +120,7 @@ Tranzactie TranzactieRepository::getById(const int &id) {
             return tr;
     }
 
-    throw std::runtime_error("ID does not exist");
+    throw IdNotFoundException("TranzactieRepository");
 }
 
 std::vector<Tranzactie> TranzactieRepository::_build_from_result(const result &res, bool execute_transactions) {
@@ -140,14 +140,6 @@ std::vector<Tranzactie> TranzactieRepository::_build_from_result(const result &r
     }
     return ans;
 }
-
-//TranzactieRepository &TranzactieRepository::operator = (TranzactieRepository other) {
-//    CrudRepository<Tranzactie, int>::operator =(other);
-//    std::swap(tranzactii, other.tranzactii);
-//    std::swap(depoziteRepository, other.depoziteRepository);
-//    std::swap(produsRepository, other.produsRepository);
-//    return *this;
-//}
 
 std::shared_ptr<Repository<Tranzactie>> TranzactieRepository::clone() const {
     return std::make_shared<TranzactieRepository>(*this);

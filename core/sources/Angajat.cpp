@@ -7,8 +7,13 @@
 #include <memory>
 #include <utility>
 #include "cpprest/json.h"
+#include "../../infra/headers/Utilities.h"
 
-Angajat::Angajat(const Angajat &other) : first_name(other.first_name), last_name(other.last_name), cnp(other.cnp), manager(other.manager) { }
+Angajat::Angajat(const Angajat &other) : first_name(other.first_name), last_name(other.last_name), cnp(other.cnp), manager(other.manager) {
+    if (Utilities::containsNonAlphaChars(first_name) || Utilities::containsNonAlphaChars(last_name)) {
+        throw IllegalArgumentException();
+    }
+}
 
 std::ostream &operator<<(std::ostream &os, const Angajat &a) {
     os << "Angajat " << a.first_name << " " << a.last_name << "\n"

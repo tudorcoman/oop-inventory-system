@@ -52,5 +52,9 @@ public:
         stream << timestamp;
         return stream.str();
     }
+
+    static bool containsNonAlphaChars(std::string s) {
+        return s.find_first_not_of("abcdefghijklmnopqrstuvwxyz") != std::string::npos;
+    }
 };
 #endif //OOP_UTILITIES_H

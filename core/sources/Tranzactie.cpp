@@ -14,7 +14,6 @@ std::ostream &operator<<(std::ostream &os, const Tranzactie &tr) {
 
     os << std::fixed << std::showpoint << std::setprecision(2);
     os << tr.quantity << " x " << tr.produs.getNume() << "\n";
-    //os << "Detalii produs: " << tr.produs;
     return os;
 }
 
@@ -74,10 +73,6 @@ bool Tranzactie::operator!=(const Tranzactie &rhs) const {
 std::shared_ptr<JsonEntity> Tranzactie::clone() const {
     return std::make_shared<Tranzactie>(*this);
 }
-
-//void Tranzactie::setProdus(const Produs &produs) {
-//    Tranzactie::produs = produs;
-//}
 
 std::ostream& operator<<(std::ostream& os, const Tranzactie::Type tip) {
     switch(tip) {

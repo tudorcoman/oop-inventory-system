@@ -33,9 +33,6 @@ public:
     };
 
     HTTPListener(const std::string& host, const std::string &url, const RequestHandler& requestHandler);
-
-//    void support(const method& method, const std::string &path, const std::function<void(http_request)>& handler);
-
     pplx::task<void> open();
 };
 

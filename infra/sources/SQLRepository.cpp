@@ -21,15 +21,9 @@ SQLRepository::SQLRepository() {
         std::cerr << e.what() << std::endl;
         exit(1);
     }
-
-//    _fetch_angajati();
 }
 
 SQLRepository *SQLRepository::getInstance() {
     static SQLRepository instance;
     return &instance;
 }
-
-//Angajat SQLRepository::getAngajat(const int &id) const {
-//    return angajati.at(id);
-//}

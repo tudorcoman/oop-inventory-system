@@ -121,7 +121,7 @@ Angajat AngajatRepository::getById(const int &id) {
         _fetch_objects();
     }
     if (!angajati.contains(id))
-        throw std::runtime_error("ID does not exist");
+        throw IdNotFoundException("AngajatRepository");
     return angajati.at(id);
 }
 

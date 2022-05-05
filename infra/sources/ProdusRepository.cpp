@@ -117,7 +117,7 @@ Produs ProdusRepository::getById(const int &id) {
             return produs;
         }
     }
-    throw std::runtime_error("ID does not exist");
+    throw IdNotFoundException("ProdusRepository");
 }
 
 ProdusRepository &ProdusRepository::operator=(const ProdusRepository &other) {

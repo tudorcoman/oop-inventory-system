@@ -4,6 +4,7 @@
 
 #include "../headers/Repository.h"
 #include "../../infra/headers/SQLRepository.h"
+#include "../headers/Exceptions.h"
 
 template<typename T>
 result Repository<T>::_run_select(const std::string &sql) {
@@ -38,7 +39,7 @@ std::string Repository<T>::_build_where_clause(const std::map<std::string, std::
         std::string where_clause;
         auto x = std::find(getFields().begin(), getFields().end(), it.first);
         if(x == getFields().end()) {
-            throw std::runtime_error("Illegal field");
+            throw IllegalFieldException();
         } else {
             where_clause += it.first + "=";
             switch(x->getTip()) {
