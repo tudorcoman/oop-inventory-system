@@ -11,7 +11,7 @@ bool DepoziteRepository::prepared_statements;
 void DepoziteRepository::_fetch_objects() {
     if(!fetched_objects) {
         result res = CrudRepository<Depozit>::_run_select("SELECT * FROM " + getTable());
-        for (result::const_iterator it = res.begin(); it != res.end(); it ++) {
+        for (result::const_iterator it = res.begin(); it != res.end(); ++ it) {
             int id = it[0].as<int>(), mgr_id = it[3].as<int>();
             Depozit d = ObjectFactory::depozitFromResult(it, std::make_shared<Angajat>(angajatRepository.getById(mgr_id)));
             depozite.insert({id, d});
@@ -61,7 +61,7 @@ std::vector<Depozit> DepoziteRepository::opRetrieve(std::map<std::string, std::s
     const result res = CrudRepository::_run_select(query);
 
     std::vector<Depozit> answer;
-    for (result::const_iterator it = res.begin(); it != res.end(); it ++) {
+    for (result::const_iterator it = res.begin(); it != res.end(); ++ it) {
         int id = it[0].as<int>();
         answer.push_back(depozite.at(id));
     }
@@ -112,10 +112,9 @@ int DepoziteRepository::findDepozit(const Depozit &d) {
     if(!fetched_objects) {
         _fetch_objects();
     }
-    for (const auto& it: depozite)
-        if (it.second.getAdresa() == d.getAdresa() && it.second.getNume() == d.getNume())
-            return it.first;
-    return -1;
+
+    auto res = std::find_if(depozite.begin(), depozite.end(), [d](const std::pair<int, Depozit>& it) {return (it.second.getAdresa() == d.getAdresa() && it.second.getNume() == d.getNume());});
+    return (res == depozite.end()) ? -1 : res->first;
 }
 
 DepoziteRepository &DepoziteRepository::operator=(const DepoziteRepository &other) {
@@ -129,7 +128,4 @@ std::shared_ptr<Repository<Depozit>> DepoziteRepository::clone() const {
     return std::make_shared<DepoziteRepository>(*this);
 }
 
-DepoziteRepository::DepoziteRepository(const DepoziteRepository &other): CrudRepository<Depozit>(other) {
-    depozite = other.depozite;
-    angajatRepository = other.angajatRepository;
-}
+DepoziteRepository::DepoziteRepository(const DepoziteRepository &other): CrudRepository<Depozit>(other), depozite(other.depozite), angajatRepository(other.angajatRepository) { }

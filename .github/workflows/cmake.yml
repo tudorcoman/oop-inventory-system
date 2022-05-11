@@ -56,15 +56,15 @@ jobs:
           #   boost_use_static: ON
           #   build_shared_libs: OFF
 
-          - os: ubuntu-20.04
-            c: gcc-10
-            cxx: g++-10
-            name: Ubuntu 20.04 GCC 10
-            # cmake_flags:
-            boost_link: static
-            boost_toolset: gcc
-            boost_use_static: ON
-            build_shared_libs: OFF
+          #- os: ubuntu-20.04
+          #  c: gcc-10
+          #  cxx: g++-10
+          #  name: Ubuntu 20.04 GCC 10
+          #  # cmake_flags:
+          #  boost_link: static
+          #  boost_toolset: gcc
+          #  boost_use_static: ON
+          #  build_shared_libs: OFF
 
           - os: macos-11
             c: clang
@@ -297,7 +297,6 @@ jobs:
             -DBoost_USE_STATIC_RUNTIME=$BOOST_USE_STATIC \
             -DCPPRESTSDK_LIB_DIR=libs/cpprestsdk/build.release/install_dir/lib \
             -DGITHUB_ACTIONS=ON \
-            -DZLIB_LIBRARY=/usr/lib/libz.dll.a \
             ${{ matrix.cmake_flags }}
 
       - name: Windows patch

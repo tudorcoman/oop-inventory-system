@@ -49,10 +49,9 @@ void AngajatController::handle_delete(const http_request &req) {
     web::json::value json = jsonTask.get();
     Angajat a;
     a.fromJson(json);
-    int mgr_id;
 
     try {
-        mgr_id = json[U("manager_id")].as_integer();
+        int mgr_id = json[U("manager_id")].as_integer();
         Angajat manager = angajatRepository.getById(mgr_id);
         a.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {

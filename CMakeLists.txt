@@ -33,6 +33,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     find_package(ZLIB REQUIRED)
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     message("-- configuring gcc options")
+    find_package(ZLIB REQUIRED)
     target_compile_options(${PROJECT_NAME} PRIVATE -DBOOST_LOG_DYN_LINK -lssl -lcrypto)
 endif()
 
@@ -110,8 +111,9 @@ if(APPLE)
     # endif()
 elseif(UNIX)
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+        set(ZLIB_LIBRARY "/usr/lib/libz.dll.a")
         # we might use this sanitizer on Clang 10 on Linux
-        # we cannot mix sanitizers with Valgrind
+        # we cannot mix sanitizers wth Valgrind
         # target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
         # target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
     elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")

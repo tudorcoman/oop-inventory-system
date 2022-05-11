@@ -8,7 +8,7 @@
 bool ProdusRepository::prepared_statements;
 std::vector<Produs> ProdusRepository::_build_from_result(const result &res) {
     std::vector<Produs> prd;
-    for(result::const_iterator it = res.begin(); it != res.end(); it ++) {
+    for(result::const_iterator it = res.begin(); it != res.end(); ++ it) {
         prd.push_back(ObjectFactory::produsFromResult(it));
     }
     return prd;
@@ -69,7 +69,8 @@ bool ProdusRepository::opUpdate(const int &id, const Produs &p) {
 
     const Produs prod = getById(id);
     try {
-        std::remove(produse.begin(), produse.end(), prod);
+        auto x = std::remove(produse.begin(), produse.end(), prod);
+        assert(x != produse.end());
         Produs new_product = Produs(id, p.getNume(), p.getCategorie(), p.getPretCumparare(), p.getPretVanzare());
         produse.push_back(new_product);
 
@@ -98,12 +99,11 @@ Produs ProdusRepository::getById(const int &id) {
     if(!fetched_objects) {
         _fetch_objects();
     }
-    for (const auto& produs: produse) {
-        if(produs.getId() == id) {
-            return produs;
-        }
-    }
-    throw IdNotFoundException("ProdusRepository");
+
+    auto produs = std::find_if(produse.begin(), produse.end(), [id](const Produs& p) {return p.getId() == id;});
+    if(produs == produse.end())
+        throw IdNotFoundException("ProdusRepository");
+    return *produs;
 }
 
 ProdusRepository &ProdusRepository::operator=(const ProdusRepository &other) {
@@ -116,6 +116,4 @@ std::shared_ptr<Repository<Produs>> ProdusRepository::clone() const {
     return std::make_shared<ProdusRepository>(*this);
 }
 
-ProdusRepository::ProdusRepository(const ProdusRepository &other): CrudRepository(other) {
-    produse = other.produse;
-}
+ProdusRepository::ProdusRepository(const ProdusRepository &other): CrudRepository(other), produse(other.produse) { }

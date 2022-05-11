@@ -17,10 +17,9 @@ void DepozitController::handle_post(const http_request &req) {
     web::json::value json = jsonTask.get();
     Depozit d;
     d.fromJson(json);
-    int mgr_id = -1;
 
     try {
-        mgr_id = json[U("manager")].as_integer();
+        int mgr_id = json[U("manager")].as_integer();
         Angajat manager = depoziteRepository.angajatRepository.getById(mgr_id);
         d.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {
@@ -51,10 +50,9 @@ void DepozitController::handle_delete(const http_request &req) {
     web::json::value json = jsonTask.get();
     Depozit d;
     d.fromJson(json);
-    int mgr_id = -1;
 
     try {
-        mgr_id = json[U("manager")].as_integer();
+        int mgr_id = json[U("manager")].as_integer();
         Angajat manager = depoziteRepository.angajatRepository.getById(mgr_id);
         d.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {

@@ -109,17 +109,16 @@ Tranzactie TranzactieRepository::getById(const int &id) {
         _fetch_objects();
     }
 
-    for (const auto& tr: tranzactii) {
-        if(tr.getId() == id)
-            return tr;
-    }
+    auto it = std::find_if(tranzactii.begin(), tranzactii.end(), [id](const Tranzactie& tr) { return tr.getId() == id; });
+    if (it == tranzactii.end())
+        throw IdNotFoundException("TranzactieRepository");
 
-    throw IdNotFoundException("TranzactieRepository");
+    return *it;
 }
 
 std::vector<Tranzactie> TranzactieRepository::_build_from_result(const result &res, bool execute_transactions) {
     std::vector<Tranzactie> ans;
-    for(result::const_iterator it = res.begin(); it != res.end(); it ++) {
+    for(result::const_iterator it = res.begin(); it != res.end(); ++ it) {
         int id = it[0].as<int>();
         Produs p = produsRepository.getById(it[1].as<int>());
         Depozit d = depoziteRepository.getById(it[2].as<int>());

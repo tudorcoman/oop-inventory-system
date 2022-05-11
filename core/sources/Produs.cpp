@@ -91,10 +91,4 @@ std::shared_ptr<JsonEntity> Produs::clone() const {
     return std::make_shared<Produs>(*this);
 }
 
-Produs::Produs(const Produs &other) {
-    id = other.id;
-    nume = other.nume;
-    categorie = other.categorie;
-    pretCumparare = other.pretCumparare;
-    pretVanzare = other.pretVanzare;
-}
+Produs::Produs(const Produs &other): id(other.id), nume(other.nume), categorie(other.categorie), pretCumparare(other.pretCumparare), pretVanzare(other.pretVanzare) { }

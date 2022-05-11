@@ -10,7 +10,7 @@ bool AngajatRepository::prepared_statements;
 void AngajatRepository::_fetch_objects() {
     if (!fetched_objects) {
         result res = CrudRepository<Angajat, int>::_run_select("SELECT * FROM " + getTable());
-        for (result::const_iterator it = res.begin(); it != res.end(); it++) {
+        for (result::const_iterator it = res.begin(); it != res.end(); ++ it) {
             int id = it[0].as<int>();
             int mgr_id = (it[4].is_null()) ? 0 : it[4].as<int>();
             if (mgr_id == 0) {
@@ -18,7 +18,7 @@ void AngajatRepository::_fetch_objects() {
                 angajati.insert({id, a});
             }
         }
-        for (result::const_iterator it = res.begin(); it != res.end(); it++) {
+        for (result::const_iterator it = res.begin(); it != res.end(); ++ it) {
             const int id = it[0].as<int>();
             const int mgr_id = (it[4].is_null()) ? 0 : it[4].as<int>();
             if (mgr_id != 0) {
@@ -56,7 +56,7 @@ std::vector<Angajat> AngajatRepository::opRetrieve(std::map<std::string, std::st
     const result res = CrudRepository::_run_select(query);
 
     std::vector<Angajat> answer;
-    for (result::const_iterator it = res.begin(); it != res.end(); it++) {
+    for (result::const_iterator it = res.begin(); it != res.end(); ++ it) {
         int id = it[0].as<int>();
         answer.push_back(angajati.at(id));
     }
@@ -121,10 +121,9 @@ int AngajatRepository::findAngajat(const Angajat &a) {
     if(!fetched_objects) {
         _fetch_objects();
     }
-    for (const auto& it: angajati)
-        if (it.second == a)
-            return it.first;
-    return -1;
+
+    auto it = std::find_if(angajati.begin(), angajati.end(), [a](const std::pair<int, Angajat>& pia) {return pia.second == a;});
+    return (it == angajati.end()) ? -1 : it->first;
 }
 
 std::shared_ptr<Repository<Angajat>> AngajatRepository::clone() const {

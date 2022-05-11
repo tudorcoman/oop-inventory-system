@@ -12,6 +12,8 @@
 class Tranzactie: public JsonEntity {
 public:
     enum Type {IN, OUT};
+
+    Tranzactie(const Tranzactie& other);
     explicit Tranzactie(int id, const Produs& produs, double quantity, Type tip, boost::posix_time::ptime timestamp) : id(id), produs(produs), quantity(quantity),
                                                                             tip(tip), timestamp(timestamp) {}
 
@@ -37,8 +39,7 @@ public:
 
     bool operator!=(const Tranzactie &rhs) const;
 
-    Tranzactie& operator = (const Tranzactie &other) = default;
-
+    Tranzactie& operator = (const Tranzactie &other);
 
 private:
     int id;

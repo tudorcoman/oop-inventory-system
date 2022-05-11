@@ -93,11 +93,7 @@ void Depozit::fromJson(web::json::value obj) {
     this->adresa = obj[U("adresa")].as_string();
 }
 
-Depozit::Depozit() {
-    nume = "";
-    adresa = "";
-    manager = std::shared_ptr<Angajat>();
-}
+Depozit::Depozit(): nume(""), adresa(""), manager(std::shared_ptr<Angajat>()) { }
 
 void Depozit::setManager(const std::shared_ptr<Angajat> &mgr) {
     this->manager = mgr;
@@ -120,13 +116,6 @@ std::shared_ptr<JsonEntity> Depozit::clone() const {
     return std::make_shared<Depozit>(*this);
 }
 
-Depozit::Depozit(const Depozit &other) {
-    nume = other.nume;
-    adresa = other.adresa;
-    stoc = other.stoc;
-    tranzactii = other.tranzactii;
-    manager = other.manager;
-}
-
+Depozit::Depozit(const Depozit &other): nume(other.nume), adresa(other.adresa), stoc(other.stoc), tranzactii(other.tranzactii), manager(other.manager) { }
 
 

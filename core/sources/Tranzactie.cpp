@@ -81,3 +81,16 @@ std::ostream& operator<<(std::ostream& os, const Tranzactie::Type tip) {
     }
     return os;
 }
+
+Tranzactie &Tranzactie::operator = (const Tranzactie& other) {
+    id = other.id;
+    produs = other.produs;
+    quantity = other.quantity;
+    timestamp = other.timestamp;
+    tip = other.tip;
+    return *this;
+}
+
+Tranzactie::Tranzactie(const Tranzactie &other): id(other.id), produs(other.produs), quantity(other.quantity), timestamp(other.timestamp) {
+    tip = other.tip;
+}
