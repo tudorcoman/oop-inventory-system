@@ -24,24 +24,24 @@ void DepozitController::handle_post(const http_request &req) {
         Angajat manager = depoziteRepository.angajatRepository.getById(mgr_id);
         d.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {
-        req.reply(status_codes::InternalError, "bad manager id");
+        req.reply(status_codes::BadRequest, "bad manager id");
     }
 
     if (json.has_number_field("id")) {
-        // up[date operation
+        // update operation
         const int id = json[U("id")].as_integer();
         std::string message = "Depozitul cu id = " + std::to_string(id);
         if (depoziteRepository.opUpdate(id, d)) {
             req.reply(status_codes::OK, message + " a fost actualizat");
         } else {
-            req.reply(status_codes::InternalError, message + " nu a putut fi actualizat");
+            throw InternalErrorException(message + " nu a putut fi actualizat");
         }
     } else {
         // create operation
         if (depoziteRepository.opCreate(d)) {
             req.reply(status_codes::OK, "Depozit creat");
         } else {
-            req.reply(status_codes::InternalError, "Depozitul nu a putut fi creat");
+            throw InternalErrorException("Depozitul nu a putut fi creat");
         }
     }
 }
@@ -58,14 +58,14 @@ void DepozitController::handle_delete(const http_request &req) {
         Angajat manager = depoziteRepository.angajatRepository.getById(mgr_id);
         d.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {
-        req.reply(status_codes::InternalError, "bad manager id");
+        req.reply(status_codes::BadRequest, "bad manager id");
     }
 
     int dep_id = depoziteRepository.findDepozit(d);
     if (dep_id != -1 && depoziteRepository.opDelete(dep_id)) {
         req.reply(status_codes::OK, "Depozitul a fost sters");
     } else {
-        req.reply(status_codes::InternalError, "Depozitul nu a putut fi sters");
+        throw InternalErrorException("Depozitul nu a putut fi sters");
     }
 }
 

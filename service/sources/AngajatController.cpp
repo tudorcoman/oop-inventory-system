@@ -22,7 +22,7 @@ void AngajatController::handle_post(const http_request &req) {
         Angajat manager = angajatRepository.getById(mgr_id);
         a.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {
-        req.reply(status_codes::InternalError, "bad manager id");
+        req.reply(status_codes::BadRequest, "bad manager id");
     }
 
     if (json.has_number_field("id")) {
@@ -32,14 +32,14 @@ void AngajatController::handle_post(const http_request &req) {
         if (angajatRepository.opUpdate(id, a, mgr_id)) {
             req.reply(status_codes::OK, message + " a fost actualizat");
         } else {
-            req.reply(status_codes::InternalError, message + " nu a putut fi actualizat");
+            throw InternalErrorException(message + " nu a putut fi actualizat");
         }
     } else {
         // create operation
         if (angajatRepository.opCreate(a, mgr_id)) {
             req.reply(status_codes::OK, "Angajat creat");
         } else {
-            req.reply(status_codes::InternalError, "Angajatul nu a putut fi creat");
+            throw InternalErrorException("Angajatul nu a putut fi actualizat");
         }
     }
 }
@@ -56,14 +56,14 @@ void AngajatController::handle_delete(const http_request &req) {
         Angajat manager = angajatRepository.getById(mgr_id);
         a.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {
-        req.reply(status_codes::InternalError, "bad manager id");
+        req.reply(status_codes::BadRequest, "bad manager id");
     }
 
     int ang_id = angajatRepository.findAngajat(a);
     if (ang_id != -1 && angajatRepository.opDelete(ang_id)) {
         req.reply(status_codes::OK, "Angajatul a fost sters");
     } else {
-        req.reply(status_codes::InternalError, "Angajatul nu a putut fi sters");
+        throw InternalErrorException("Angajatul nu a putut fi sters");
     }
 }
 

@@ -53,8 +53,11 @@ public:
         return stream.str();
     }
 
-    static bool containsNonAlphaChars(std::string s) {
-        return s.find_first_not_of("abcdefghijklmnopqrstuvwxyz") != std::string::npos;
+    static bool containsNonAlphaChars(const std::string& s) {
+        for (auto ch: s)
+            if (!isalpha(ch))
+                return false;
+        return true;
     }
 };
 #endif //OOP_UTILITIES_H

@@ -7,19 +7,39 @@
 
 #include <stdexcept>
 
-class IllegalFieldException: public std::runtime_error {
+class ApplicationException: public std::runtime_error {
 public:
-    explicit IllegalFieldException(): runtime_error("Illegal Field") { };
+    explicit ApplicationException(const std::string& str): runtime_error(str) { }
 };
 
-class IllegalArgumentException: public std::runtime_error {
+class IncorrectUrlPathException: public ApplicationException {
 public:
-    explicit IllegalArgumentException(): runtime_error("Illegal Value") { };
+    explicit IncorrectUrlPathException(): ApplicationException("URL Path is not correct") { }
 };
 
-class IdNotFoundException: public std::runtime_error {
+class UrlPathNotFoundException: public ApplicationException {
 public:
-    explicit IdNotFoundException(const std::string& str): runtime_error("ID (" + str + ") not found") { }
+    explicit UrlPathNotFoundException(): ApplicationException("URL Path is not handled") { }
+};
+
+class InternalErrorException: public ApplicationException {
+public:
+    explicit InternalErrorException(const std::string& str): ApplicationException(str) { }
+};
+
+class IllegalFieldException: public ApplicationException {
+public:
+    explicit IllegalFieldException(): ApplicationException("Illegal Field") { };
+};
+
+class IllegalArgumentException: public ApplicationException {
+public:
+    explicit IllegalArgumentException(): ApplicationException("Illegal Value") { };
+};
+
+class IdNotFoundException: public ApplicationException {
+public:
+    explicit IdNotFoundException(const std::string& str): ApplicationException("ID (" + str + ") not found") { }
 };
 
 

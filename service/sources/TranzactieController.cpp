@@ -28,7 +28,7 @@ void TranzactieController::handle_post(const http_request &req) {
     }
 
     if (tranzactieRepository.opCreate(t, depozit_id)) {
-        req.reply(status_codes::OK, "Tranzactie creat");
+        req.reply(status_codes::OK, "Tranzactie creata");
     } else {
         req.reply(status_codes::InternalError, "Tranzactia nu a putut fi creata");
     }

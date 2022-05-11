@@ -11,7 +11,12 @@ TranzactieRepository::TranzactieRepository(DepoziteRepository depoziteRepository
                                                                                                                                                     TableField("quantity", TableField::DOUBLE),
                                                                                                                                                     TableField("tip", TableField::TEXT),
                                                                                                                                                     TableField("data_tranzactie", TableField::DATE)}),
-                                                                                   depoziteRepository(std::move(depoziteRepository)), produsRepository(std::move(produsRepository)) {}
+                                                                                   depoziteRepository(std::move(depoziteRepository)), produsRepository(std::move(produsRepository)) {
+    prepareStatement("tranzactii_create_insert", "INSERT INTO " + getTable() +
+                                                                               " (product_id, depozit_id, quantity, tip, data_tranzactie) VALUES ($1, $2, $3, $4, $5::timestamp)");
+    prepareStatement("tranzactii_create_select", "SELECT id FROM " + getTable() +
+                                                                               " WHERE product_id=$1 AND depozit_id=$2 AND quantity=$3 AND tip=$4 AND data_tranzactie = $5::timestamp");
+}
 
 void TranzactieRepository::_fetch_objects() {
     if(!fetched_objects) {
@@ -36,23 +41,10 @@ bool TranzactieRepository::opCreate(const Tranzactie &t, int depozit_id) {
     }
 
     try {
-        char buffer[1024];
-        const std::string query_format = "INSERT INTO " + getTable() +
-                                         " (product_id, depozit_id, quantity, tip, data_tranzactie) VALUES (%d, %d, %lf, '%s', '%s'::timestamp)";
-        sprintf(buffer, query_format.c_str(), t.getProdus().getId(), depozit_id, t.getQuantity(),
-                t.getTip() == Tranzactie::Type::IN ? "IN" : "OUT", Utilities::getStringFromDate(t.getTimestamp()).c_str());
-        const std::string query(buffer);
+        const std::string transaction_type = t.getTip() == Tranzactie::Type::IN ? "IN" : "OUT";
+        executePrepared("tranzactii_create_insert", t.getProdus().getId(), depozit_id, t.getQuantity(),transaction_type, Utilities::getStringFromDate(t.getTimestamp()));
 
-        buffer[0] = 0;
-        const std::string afla_id_query_format = "SELECT id FROM " + getTable() +
-                                                 " WHERE product_id=%d AND depozit_id=%d AND quantity=%lf AND tip='%s' AND data_tranzactie = '%s'::timestamp";
-        sprintf(buffer, afla_id_query_format.c_str(), t.getProdus().getId(), depozit_id, t.getQuantity(),
-                t.getTip() == Tranzactie::Type::IN ? "IN" : "OUT", Utilities::getStringFromDate(t.getTimestamp()).c_str());
-        const std::string afla_id_query = std::string(buffer);
-
-        CrudRepository<Tranzactie, int>::_run_working_query(query);
-
-        result r = CrudRepository::_run_select(afla_id_query);
+        result r = getTransaction().exec_prepared("tranzactii_create_select", t.getProdus().getId(), depozit_id, t.getQuantity(), transaction_type, Utilities::getStringFromDate(t.getTimestamp()));
         const int id = r.begin()[0].as<int>();
 
         Tranzactie t_noua = Tranzactie(id, t.getProdus(), t.getQuantity(), t.getTip(), t.getTimestamp());

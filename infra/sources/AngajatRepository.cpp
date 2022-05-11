@@ -3,6 +3,7 @@
 //
 
 #include "../headers/AngajatRepository.h"
+#include "../../core/headers/ObjectFactory.h"
 
 void AngajatRepository::_fetch_objects() {
     if (!fetched_objects) {
@@ -11,8 +12,7 @@ void AngajatRepository::_fetch_objects() {
             int id = it[0].as<int>();
             int mgr_id = (it[4].is_null()) ? 0 : it[4].as<int>();
             if (mgr_id == 0) {
-                Angajat a(it[1].as<std::string>(), it[2].as<std::string>(), it[3].as<long long>(),
-                          std::shared_ptr<Angajat>());
+                Angajat a(ObjectFactory::angajatFromResult(it, std::shared_ptr<Angajat>()));
                 angajati.insert({id, a});
             }
         }
@@ -20,8 +20,7 @@ void AngajatRepository::_fetch_objects() {
             const int id = it[0].as<int>();
             const int mgr_id = (it[4].is_null()) ? 0 : it[4].as<int>();
             if (mgr_id != 0) {
-                Angajat a(it[1].as<std::string>(), it[2].as<std::string>(), it[3].as<long long>(),
-                          std::make_shared<Angajat>(angajati.at(mgr_id)));
+                Angajat a(ObjectFactory::angajatFromResult(it, std::make_shared<Angajat>(angajati.at(mgr_id))));
                 angajati.insert({id, a});
             }
         }
@@ -34,20 +33,9 @@ bool AngajatRepository::opCreate(const Angajat &a, int manager_id) {
         _fetch_objects();
     }
     try {
-        char buffer[1024];
+        executePrepared("angajati_create_insert", a.getFirstName(), a.getLastName(), a.getCnp(), manager_id);
 
-        const std::string query_format = "INSERT INTO " + getTable() + " (first_name, last_name, cnp, manager_id) VALUES ('%s', '%s', %lld, %d)";
-        sprintf(buffer, query_format.c_str(), a.getFirstName().c_str(), a.getLastName().c_str(), a.getCnp(), manager_id);
-        const std::string query = std::string(buffer);
-
-        buffer[0] = 0;
-        const std::string afla_id_query_format = "SELECT id FROM "+ getTable() +" WHERE cnp = %lld AND first_name = '%s' AND last_name = '%s'";
-        sprintf(buffer, afla_id_query_format.c_str(), a.getCnp(), a.getFirstName().c_str(), a.getLastName().c_str());
-        const std::string afla_id_query = std::string(buffer);
-
-        CrudRepository<Angajat, int>::_run_working_query(query);
-
-        result r = CrudRepository::_run_select(afla_id_query);
+        result r = getTransaction().exec_prepared("angajati_create_select", a.getCnp(), a.getFirstName(), a.getLastName());
         const int id = r.begin()[0].as<int>();
         angajati.insert({id, a});
 
@@ -79,16 +67,10 @@ bool AngajatRepository::opUpdate(const int &id, const Angajat &a, int manager_id
         _fetch_objects();
     }
     try {
-        char buffer[1024];
         angajati.erase(angajati.find(id));
         angajati.insert({id, a});
 
-        const std::string query_format = "UPDATE " + getTable() + " SET first_name='%s', last_name='%s', cnp=%lld, manager_id=%d WHERE id=%d";
-        sprintf(buffer, query_format.c_str(), a.getFirstName().c_str(), a.getLastName().c_str(), a.getCnp(), manager_id, id);
-        const std::string query = std::string(buffer);
-
-        CrudRepository<Angajat, int>::_run_working_query(query);
-
+        executePrepared("angajati_update", a.getFirstName(), a.getLastName(), a.getCnp(), manager_id, id);
         return true;
     } catch(const std::exception& e) {
         return false;
@@ -114,7 +96,11 @@ AngajatRepository::AngajatRepository() :
                                                                          TableField("first_name", TableField::TEXT),
                                                                          TableField("last_name", TableField::TEXT),
                                                                          TableField("cnp", TableField::LONG),
-                                                                         TableField("manager_id", TableField::INT)}) {}
+                                                                         TableField("manager_id", TableField::INT)}) {
+    prepareStatement("angajati_create_insert", "INSERT INTO " + getTable() + " (first_name, last_name, cnp, manager_id) VALUES ($1, $2, $3, $4)");
+    prepareStatement("angajati_create_select", "SELECT id FROM "+ getTable() +" WHERE cnp = $1 AND first_name = $2 AND last_name = $3");
+    prepareStatement("angajati_update", "UPDATE " + getTable() + " SET first_name=$1, last_name=$2, cnp=$3, manager_id=$4 WHERE id=$5");
+}
 
 Angajat AngajatRepository::getById(const int &id) {
     if(!fetched_objects) {

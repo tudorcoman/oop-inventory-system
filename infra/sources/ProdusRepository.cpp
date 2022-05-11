@@ -3,16 +3,12 @@
 //
 
 #include "../headers/ProdusRepository.h"
+#include "../../core/headers/ObjectFactory.h"
 
 std::vector<Produs> ProdusRepository::_build_from_result(const result &res) {
     std::vector<Produs> prd;
     for(result::const_iterator it = res.begin(); it != res.end(); it ++) {
-        int id = it[0].as<int>();
-        auto name = it[1].as<std::string>(),
-             category = it[2].as<std::string>();
-        auto pretCumparare = it[3].as<double>(),
-             pretVanzare = it[4].as<double>();
-        prd.emplace_back(id, name, category, pretCumparare, pretVanzare);
+        prd.push_back(ObjectFactory::produsFromResult(it));
     }
     return prd;
 }
@@ -30,27 +26,20 @@ ProdusRepository::ProdusRepository():
                                                                   TableField("name", TableField::TEXT),
                                                                   TableField("category", TableField::TEXT),
                                                                   TableField("buying_price", TableField::DOUBLE),
-                                                                  TableField("selling_price", TableField::DOUBLE)}) {}
+                                                                  TableField("selling_price", TableField::DOUBLE)}) {
+    prepareStatement("produse_create_insert", "INSERT INTO " + getTable() + " (name, category, buying_price, selling_price) VALUES ($1, $2, $3, $4)");
+    prepareStatement("produse_create_select", "SELECT id FROM " + getTable() + " WHERE name=$1 AND category=$2 AND buying_price=$3 AND selling_price=$4");
+    prepareStatement("produse_update", "UPDATE " + getTable() + " SET name=$1, category=$2, buying_price=$3, selling_price=$4 WHERE id=$5");
+}
 
 bool ProdusRepository::opCreate(const Produs &p) {
     if(!fetched_objects) {
         _fetch_objects();
     }
     try {
-        char buffer[1024];
+        executePrepared("produse_create_insert", p.getNume(), p.getCategorie(), p.getPretCumparare(), p.getPretVanzare());
 
-        const std::string query_format = "INSERT INTO " + getTable() + " (name, category, buying_price, selling_price) VALUES ('%s', '%s', %lf, %lf)";
-        sprintf(buffer, query_format.c_str(), p.getNume().c_str(), p.getCategorie().c_str(), p.getPretCumparare(), p.getPretVanzare());
-        const std::string query(buffer);
-
-        buffer[0] = 0;
-        const std::string afla_id_query_format = "SELECT id FROM " + getTable() + " WHERE name='%s' AND category='%s' AND buying_price=%lf AND selling_price=%lf";
-        sprintf(buffer, afla_id_query_format.c_str(), p.getNume().c_str(), p.getCategorie().c_str(), p.getPretCumparare(), p.getPretVanzare());
-        const std::string afla_id_query(buffer);
-
-        CrudRepository<Produs>::_run_working_query(query);
-
-        result r = CrudRepository::_run_select(afla_id_query);
+        result r = getTransaction().exec_prepared("produse_create_select", p.getNume(), p.getCategorie(), p.getPretCumparare(), p.getPretVanzare());
         const int id = r.begin()[0].as<int>();
 
         Produs nou = Produs(id, p.getNume(), p.getCategorie(), p.getPretCumparare(), p.getPretVanzare());
@@ -77,17 +66,13 @@ bool ProdusRepository::opUpdate(const int &id, const Produs &p) {
         _fetch_objects();
     }
 
+    const Produs prod = getById(id);
     try {
-        char buffer[1024];
-        std::remove(produse.begin(), produse.end(), getById(id));
+        std::remove(produse.begin(), produse.end(), prod);
         Produs new_product = Produs(id, p.getNume(), p.getCategorie(), p.getPretCumparare(), p.getPretVanzare());
         produse.push_back(new_product);
 
-        const std::string query_format = "UPDATE " + getTable() + " SET name='%s', category='%s', buying_price=%lf, selling_price=%lf WHERE id=%d";
-        sprintf(buffer, query_format.c_str(), new_product.getNume().c_str(), new_product.getCategorie().c_str(), new_product.getPretCumparare(), new_product.getPretVanzare());
-        const std::string query(buffer);
-
-        CrudRepository<Produs>::_run_working_query(query);
+        executePrepared("produse_update", new_product.getNume(), new_product.getCategorie(), new_product.getPretCumparare(), new_product.getPretVanzare());
         return true;
      } catch(const std::exception& e) {
         return false;

@@ -3,6 +3,7 @@
 //
 
 #include "../headers/DepoziteRepository.h"
+#include "../../core/headers/ObjectFactory.h"
 
 #include <utility>
 
@@ -10,10 +11,8 @@ void DepoziteRepository::_fetch_objects() {
     if(!fetched_objects) {
         result res = CrudRepository<Depozit>::_run_select("SELECT * FROM " + getTable());
         for (result::const_iterator it = res.begin(); it != res.end(); it ++) {
-            int id = it[0].as<int>();
-            auto nume = it[1].as<std::string>(), adresa = it[2].as<std::string>();
-            int mgr_id = it[3].as<int>();
-            Depozit d = Depozit(nume, adresa, std::make_shared<Angajat>(angajatRepository.getById(mgr_id)));
+            int id = it[0].as<int>(), mgr_id = it[3].as<int>();
+            Depozit d = ObjectFactory::depozitFromResult(it, std::make_shared<Angajat>(angajatRepository.getById(mgr_id)));
             depozite.insert({id, d});
         }
         fetched_objects = true;
@@ -24,30 +23,21 @@ DepoziteRepository::DepoziteRepository(const AngajatRepository& angajatRepositor
                                                                                                                                             TableField("nume", TableField::TEXT),
                                                                                                                                             TableField("adresa", TableField::TEXT),
                                                                                                                                             TableField("manager", TableField::INT)}),
-                                                                                angajatRepository(angajatRepository) { }
+                                                                                angajatRepository(angajatRepository) {
+    prepareStatement("depozite_create_insert", "INSERT INTO " + getTable() + " (nume, address, manager) VALUES ($1, $2, $3)");
+    prepareStatement("depozite_create_select", "SELECT id FROM " + getTable() + " WHERE nume = $1 AND address = $2 AND manager = $3");
+    prepareStatement("depozite_update", "UPDATE " + getTable() + " SET nume=$1, address=$2, manager=$3 WHERE id=$4");
+}
 
 bool DepoziteRepository::opCreate(const Depozit &d) {
     if(!fetched_objects) {
         _fetch_objects();
     }
     try {
-        char buffer[1024];
-
         const int mgr_id = angajatRepository.findAngajat(*d.getManager());
-        const std::string query_format =
-                "INSERT INTO " + getTable() + " (nume, adresa, manager) VALUES ('%s', '%s', %d)";
-        sprintf(buffer, query_format.c_str(), d.getNume().c_str(), d.getAdresa().c_str(), mgr_id);
-        const std::string query(buffer);
+        executePrepared("depozite_create_insert", d.getNume(), d.getAdresa(), mgr_id);
 
-        buffer[0] = 0;
-        const std::string afla_id_query_format =
-                "SELECT id FROM " + getTable() + " WHERE nume = '%s' AND adresa = '%s' AND manager = %d";
-        sprintf(buffer, afla_id_query_format.c_str(), d.getNume().c_str(), d.getAdresa().c_str(), mgr_id);
-        const std::string afla_id_query = std::string(buffer);
-
-        CrudRepository<Depozit>::_run_working_query(query);
-
-        result r = CrudRepository::_run_select(afla_id_query);
+        result r = getTransaction().exec_prepared("depozite_create_select", d.getNume(), d.getAdresa(), mgr_id);
         const int id = r.begin()[0].as<int>();
         depozite.insert({id, d});
 
@@ -80,17 +70,12 @@ bool DepoziteRepository::opUpdate(const int &id, const Depozit &d) {
         _fetch_objects();
     }
 
+    const Depozit dep = getById(id);
     try {
-        char buffer[1024];
         depozite.erase(depozite.find(id));
         depozite.insert({id, d});
 
-        const std::string query_format = "UPDATE " + getTable() + " SET nume='%s', adresa='%s', manager=%d WHERE id=%d";
-        sprintf(buffer, query_format.c_str(), d.getNume().c_str(), d.getAdresa().c_str(), angajatRepository.findAngajat(*d.getManager()));
-        const std::string query(buffer);
-
-        CrudRepository<Depozit>::_run_working_query(query);
-
+        executePrepared("depozite_update", d.getNume(), d.getAdresa(), angajatRepository.findAngajat(*d.getManager()));
         return true;
     } catch(const std::exception& e) {
         return false;

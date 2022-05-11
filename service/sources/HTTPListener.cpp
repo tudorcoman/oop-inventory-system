@@ -10,17 +10,22 @@ using namespace std::placeholders;
 void HTTPListener::handle_request(const http_request& message, const method& metoda) const {
     const std::vector<std::string> path_tokens = Utilities::string_split(message.to_string(), " ");
     if (path_tokens.size() < 2) {
-        throw std::runtime_error("URL Path is not correct");
+        throw IncorrectUrlPathException();
     }
 
     const std::string cale = Utilities::string_split(path_tokens[1], url)[1];
     std::cout << cale << std::endl;
     const std::pair<std::string, method> key = make_pair(cale.substr(0, cale.find("?")), metoda);
     if(!handlers.contains(key)) {
-        throw std::runtime_error("URL Path is not handled");
+        message.reply(status_codes::NotFound, "Calea ceruta nu a putut fi gasita");
+        throw UrlPathNotFoundException();
     }
 
-    handlers.at(key)(message);
+    try {
+        handlers.at(key)(message);
+    } catch(const InternalErrorException& e) {
+        message.reply(status_codes::InternalError, e.what());
+    }
 }
 
 void HTTPListener::handle_req(const http_request &message, const std::string& type, const std::map<std::string, method>& matching) const {
@@ -32,7 +37,7 @@ HTTPListener::HTTPListener(const std::string &host, const std::string &url, cons
             {"GET", methods::GET},
             {"POST", methods::POST},
             {"PUT", methods::PUT},
-            {"DELETE", methods::DEL},
+            {"DELETE", methods::DEL}
     };
 
     for (const auto& it: requestHandler.getRecords()) {

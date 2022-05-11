@@ -6,9 +6,9 @@
 #define OOP_REPOSITORY_H
 
 #include <string>
-#include "TableField.h"
 #include <vector>
-#include "pqxx/pqxx"
+#include <pqxx/pqxx>
+#include "TableField.h"
 
 using namespace pqxx;
 
@@ -16,6 +16,10 @@ template<typename T>
 class Repository {
     std::string table;
     std::vector<TableField> fields;
+    std::shared_ptr<work> Work;
+    bool created_work;
+
+    void _reinit_work();
 protected:
     bool fetched_objects;
     virtual void _fetch_objects() = 0;
@@ -25,6 +29,14 @@ protected:
     [[nodiscard]] const std::string &getTable() const;
     [[nodiscard]] const std::vector<TableField> &getFields() const;
     [[nodiscard]] std::string _build_where_clause(const std::map<std::string, std::string>& filters) const;
+
+    [[nodiscard]] nontransaction getTransaction() const;
+
+    template<typename... Args>
+    void executePrepared(const std::string& name, Args... args);
+
+    void prepareStatement(const std::string& name, const std::string& format);
+
 public:
     Repository(std::string table, std::vector<TableField> fields);
 

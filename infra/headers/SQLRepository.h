@@ -7,7 +7,7 @@
 
 #include <fstream>
 #include <iostream>
-#include "pqxx/pqxx"
+#include <pqxx/pqxx>
 #include "../../core/headers/Angajat.h"
 #include "../../core/headers/Tranzactie.h"
 #include "../../core/headers/Depozit.h"
@@ -19,11 +19,11 @@ class SQLRepository {
 
     SQLRepository();
 
+    static std::string getConnString() ;
     template<typename T> friend class Repository;
 public:
     SQLRepository(const SQLRepository&) = delete;
     SQLRepository& operator =(const SQLRepository&) = delete;
     static SQLRepository *getInstance();
-
 };
 #endif //OOP_SQLREPOSITORY_H

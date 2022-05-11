@@ -80,7 +80,11 @@ web::json::value Depozit::getJson() const {
         obiect[U("quantity")] = value::number(it.second);
         json[U("stoc")][i ++] = obiect;
     }
-    // TBD: add json for Tranzactii as well
+    json[U("tranzactii")] = value::array();
+    i = 0;
+    for (const auto& it: tranzactii) {
+        json[U("tranzactii")][i ++] = it.getJson();
+    }
     return json;
 }
 

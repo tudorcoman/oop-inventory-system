@@ -5,7 +5,7 @@
 #ifndef OOP_JSONENTITY_H
 #define OOP_JSONENTITY_H
 
-#include "cpprest/json.h"
+#include <cpprest/json.h>
 
 class JsonEntity {
 public:

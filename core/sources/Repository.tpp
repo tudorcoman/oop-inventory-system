@@ -8,7 +8,7 @@
 
 template<typename T>
 result Repository<T>::_run_select(const std::string &sql) {
-    return nontransaction(SQLRepository::getInstance()->conn).exec(sql);
+    return getTransaction().exec(sql);
 }
 
 template<typename T>
@@ -19,7 +19,7 @@ void Repository<T>::_run_working_query(const std::string &query) {
 }
 
 template<typename T>
-Repository<T>::Repository(std::string table, std::vector<TableField> fields): table(std::move(table)), fields(std::move(fields)), fetched_objects(false) {
+Repository<T>::Repository(std::string table, std::vector<TableField> fields): table(std::move(table)), fields(std::move(fields)), created_work(false), fetched_objects(false) {
 }
 
 template<typename T>
@@ -56,4 +56,22 @@ std::string Repository<T>::_build_where_clause(const std::map<std::string, std::
         whereClause = "WHERE " + whereClause;
     }
     return whereClause;
+}
+
+template<typename T>
+nontransaction Repository<T>::getTransaction() const {
+    return {SQLRepository::getInstance()->conn};
+}
+
+template<typename T>
+void Repository<T>::prepareStatement(const std::string& name, const std::string& format) {
+    SQLRepository::getInstance()->conn.prepare(name, format);
+}
+
+template<typename T>
+template<typename... Args>
+void Repository<T>::executePrepared(const std::string &name, Args... args) {
+    work W(SQLRepository::getInstance()->conn);
+    W.exec_prepared(name, args...);
+    W.commit();
 }
