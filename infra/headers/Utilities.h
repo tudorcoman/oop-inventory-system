@@ -19,7 +19,7 @@ public:
 
         while(end != std::string::npos) {
             result.push_back(s.substr(start, end - start));
-            start = end + delim.length();
+            start = end + (unsigned int)delim.length();
             end = s.find(delim, start);
         }
 

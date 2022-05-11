@@ -21,12 +21,11 @@ if(UNIX) # Darwin or Linux
 endif()
 
 find_package(OpenSSL)
-
 find_package(PostgreSQL)
 
 
 add_executable(${PROJECT_NAME} main.cpp core/headers/Produs.h core/sources/Produs.cpp core/headers/Angajat.h core/sources/Angajat.cpp core/headers/Tranzactie.h core/sources/Tranzactie.cpp core/headers/Depozit.h core/sources/Depozit.cpp service/headers/HTTPListener.h infra/headers/Utilities.h service/sources/HTTPListener.cpp infra/headers/SQLRepository.h infra/sources/SQLRepository.cpp service/sources/AngajatController.cpp service/headers/AngajatController.h core/headers/Controller.h service/sources/WebService.cpp service/headers/WebService.h core/headers/CrudRepository.h infra/sources/AngajatRepository.cpp infra/headers/AngajatRepository.h core/sources/TableField.cpp core/headers/TableField.h infra/sources/ProdusRepository.cpp infra/headers/ProdusRepository.h service/sources/ProdusController.cpp service/headers/ProdusController.h core/headers/JsonEntity.h core/sources/Repository.tpp core/headers/Repository.h infra/sources/DepoziteRepository.cpp infra/headers/DepoziteRepository.h service/sources/DepozitController.cpp service/headers/DepozitController.h infra/sources/TranzactieRepository.cpp infra/headers/TranzactieRepository.h service/sources/TranzactieController.cpp service/headers/TranzactieController.h core/headers/Exceptions.h core/headers/ObjectFactory.h)
-
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     message("-- configuring clang options")
@@ -149,7 +148,7 @@ if (APPLE)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "-W1, -F/Library/Frameworks")
 elseif(UNIX)
     #target_link_directories(${PROJECT_NAME} PRIVATE ${CPPRESTSDK_LIB_DIR} ${PQXX_LIB_DIR} ${LIBRARIES_SEARCH_PATHS})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBS} cpprest pqxx PostgreSQL::PostgreSQL)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBS} cpprest pqxx Threads::Threads PostgreSQL::PostgreSQL)
 else()
     # link pqxx dynamically on windows
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBS} cpprest pqxx PostgreSQL::PostgreSQL)
