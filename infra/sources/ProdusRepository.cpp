@@ -5,6 +5,7 @@
 #include "../headers/ProdusRepository.h"
 #include "../../core/headers/ObjectFactory.h"
 
+bool ProdusRepository::prepared_statements;
 std::vector<Produs> ProdusRepository::_build_from_result(const result &res) {
     std::vector<Produs> prd;
     for(result::const_iterator it = res.begin(); it != res.end(); it ++) {
@@ -27,9 +28,12 @@ ProdusRepository::ProdusRepository():
                                                                   TableField("category", TableField::TEXT),
                                                                   TableField("buying_price", TableField::DOUBLE),
                                                                   TableField("selling_price", TableField::DOUBLE)}) {
-    prepareStatement("produse_create_insert", "INSERT INTO " + getTable() + " (name, category, buying_price, selling_price) VALUES ($1, $2, $3, $4)");
-    prepareStatement("produse_create_select", "SELECT id FROM " + getTable() + " WHERE name=$1 AND category=$2 AND buying_price=$3 AND selling_price=$4");
-    prepareStatement("produse_update", "UPDATE " + getTable() + " SET name=$1, category=$2, buying_price=$3, selling_price=$4 WHERE id=$5");
+    if(!prepared_statements) {
+        prepared_statements = true;
+        prepareStatement("produse_create_insert", "INSERT INTO " + getTable() + " (name, category, buying_price, selling_price) VALUES ($1, $2, $3, $4)");
+        prepareStatement("produse_create_select", "SELECT id FROM " + getTable() + " WHERE name=$1 AND category=$2 AND buying_price=$3 AND selling_price=$4");
+        prepareStatement("produse_update", "UPDATE " + getTable() + " SET name=$1, category=$2, buying_price=$3, selling_price=$4 WHERE id=$5");
+    }
 }
 
 bool ProdusRepository::opCreate(const Produs &p) {
@@ -52,9 +56,6 @@ bool ProdusRepository::opCreate(const Produs &p) {
 }
 
 std::vector<Produs> ProdusRepository::opRetrieve(std::map<std::string, std::string> filters) {
-    if(!fetched_objects) {
-        _fetch_objects();
-    }
     const std::string where_clause = _build_where_clause(filters);
     const std::string query = "SELECT * FROM " + getTable() + " " + where_clause;
     const result res = CrudRepository::_run_select(query);
@@ -113,4 +114,8 @@ ProdusRepository &ProdusRepository::operator=(const ProdusRepository &other) {
 
 std::shared_ptr<Repository<Produs>> ProdusRepository::clone() const {
     return std::make_shared<ProdusRepository>(*this);
+}
+
+ProdusRepository::ProdusRepository(const ProdusRepository &other): CrudRepository(other) {
+    produse = other.produse;
 }

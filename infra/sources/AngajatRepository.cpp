@@ -5,6 +5,8 @@
 #include "../headers/AngajatRepository.h"
 #include "../../core/headers/ObjectFactory.h"
 
+bool AngajatRepository::prepared_statements;
+
 void AngajatRepository::_fetch_objects() {
     if (!fetched_objects) {
         result res = CrudRepository<Angajat, int>::_run_select("SELECT * FROM " + getTable());
@@ -83,6 +85,7 @@ bool AngajatRepository::opDelete(const int &id) {
         _fetch_objects();
     }
     try {
+        angajati.erase(id);
         const std::string query = "DELETE FROM " + getTable() + " WHERE id = " + std::to_string(id);
         CrudRepository<Angajat, int>::_run_working_query(query);
         return true;
@@ -97,9 +100,12 @@ AngajatRepository::AngajatRepository() :
                                                                          TableField("last_name", TableField::TEXT),
                                                                          TableField("cnp", TableField::LONG),
                                                                          TableField("manager_id", TableField::INT)}) {
-    prepareStatement("angajati_create_insert", "INSERT INTO " + getTable() + " (first_name, last_name, cnp, manager_id) VALUES ($1, $2, $3, $4)");
-    prepareStatement("angajati_create_select", "SELECT id FROM "+ getTable() +" WHERE cnp = $1 AND first_name = $2 AND last_name = $3");
-    prepareStatement("angajati_update", "UPDATE " + getTable() + " SET first_name=$1, last_name=$2, cnp=$3, manager_id=$4 WHERE id=$5");
+    if(!prepared_statements) {
+        prepared_statements = true;
+        prepareStatement("angajati_create_insert", "INSERT INTO " + getTable() + " (first_name, last_name, cnp, manager_id) VALUES ($1, $2, $3, $4)");
+        prepareStatement("angajati_create_select", "SELECT id FROM "+ getTable() +" WHERE cnp = $1 AND first_name = $2 AND last_name = $3");
+        prepareStatement("angajati_update", "UPDATE " + getTable() + " SET first_name=$1, last_name=$2, cnp=$3, manager_id=$4 WHERE id=$5");
+    }
 }
 
 Angajat AngajatRepository::getById(const int &id) {

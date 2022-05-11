@@ -20,7 +20,7 @@ class Depozit: public JsonEntity {
     std::shared_ptr<Angajat> manager;
 public:
     Depozit();
-
+    Depozit(const Depozit& other);
     Depozit(std::string nume, std::string adresa, std::shared_ptr<Angajat> manager);
 
     explicit Depozit(std::string nume, std::string adresa, std::map<Produs, double> stoc,

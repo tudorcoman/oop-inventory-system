@@ -17,6 +17,7 @@ class TranzactieRepository: public CrudRepository<Tranzactie, int> {
     DepoziteRepository depoziteRepository;
     ProdusRepository produsRepository;
     friend class TranzactieController;
+    static bool prepared_statements;
     std::vector<Tranzactie> _build_from_result (const result& res, bool execute_transactions);
 public:
     TranzactieRepository(DepoziteRepository depoziteRepository, ProdusRepository produsRepository);

@@ -17,8 +17,9 @@ using namespace pqxx;
 template<typename T, typename... Types>
 class CrudRepository: public Repository<T> {
 public:
+    CrudRepository() : Repository<T>("", {}) { }
     CrudRepository(const std::string &table, const std::vector<TableField> &fields) : Repository<T>(table, fields) {}
-    virtual bool opCreate(const T& object, Types... args)  = 0;
+    virtual bool opCreate(const T& object, Types... args) = 0;
     virtual bool opUpdate(const int& id, const T& object, Types... args) = 0;
 };
 

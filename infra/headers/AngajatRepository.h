@@ -12,6 +12,7 @@
 class AngajatRepository: public CrudRepository<Angajat, int> {
     void _fetch_objects() override;
     std::map<int, Angajat> angajati;
+    static bool prepared_statements;
 public:
     AngajatRepository();
 

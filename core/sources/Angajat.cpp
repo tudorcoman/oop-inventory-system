@@ -39,7 +39,7 @@ web::json::value Angajat::getSimpleJson() const {
     value json;
     json[U("first_name")] = value::string(U(first_name));
     json[U("last_name")] = value::string(U(last_name));
-    json[U("cnp")] = value::number(cnp);
+    json[U("cnp")] = value::number((int64_t) cnp);
     return json;
 }
 

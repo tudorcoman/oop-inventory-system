@@ -7,6 +7,7 @@
 
 #include <utility>
 
+bool DepoziteRepository::prepared_statements;
 void DepoziteRepository::_fetch_objects() {
     if(!fetched_objects) {
         result res = CrudRepository<Depozit>::_run_select("SELECT * FROM " + getTable());
@@ -24,9 +25,12 @@ DepoziteRepository::DepoziteRepository(const AngajatRepository& angajatRepositor
                                                                                                                                             TableField("adresa", TableField::TEXT),
                                                                                                                                             TableField("manager", TableField::INT)}),
                                                                                 angajatRepository(angajatRepository) {
-    prepareStatement("depozite_create_insert", "INSERT INTO " + getTable() + " (nume, address, manager) VALUES ($1, $2, $3)");
-    prepareStatement("depozite_create_select", "SELECT id FROM " + getTable() + " WHERE nume = $1 AND address = $2 AND manager = $3");
-    prepareStatement("depozite_update", "UPDATE " + getTable() + " SET nume=$1, address=$2, manager=$3 WHERE id=$4");
+    if(!prepared_statements) {
+        prepared_statements = true;
+        prepareStatement("depozite_create_insert", "INSERT INTO " + getTable() + " (nume, address, manager) VALUES ($1, $2, $3)");
+        prepareStatement("depozite_create_select", "SELECT id FROM " + getTable() + " WHERE nume = $1 AND address = $2 AND manager = $3");
+        prepareStatement("depozite_update", "UPDATE " + getTable() + " SET nume=$1, address=$2, manager=$3 WHERE id=$4");
+    }
 }
 
 bool DepoziteRepository::opCreate(const Depozit &d) {
@@ -123,4 +127,9 @@ DepoziteRepository &DepoziteRepository::operator=(const DepoziteRepository &othe
 
 std::shared_ptr<Repository<Depozit>> DepoziteRepository::clone() const {
     return std::make_shared<DepoziteRepository>(*this);
+}
+
+DepoziteRepository::DepoziteRepository(const DepoziteRepository &other): CrudRepository<Depozit>(other) {
+    depozite = other.depozite;
+    angajatRepository = other.angajatRepository;
 }

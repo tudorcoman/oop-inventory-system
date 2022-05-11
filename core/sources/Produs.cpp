@@ -55,8 +55,8 @@ web::json::value Produs::getJson() const {
     using namespace web::json;
     value json;
     json[U("id")] = value::number(id);
-    json[U("name")] = value::string(U(nume));
-    json[U("category")] = value::string(U(categorie));
+    json[U("name")] = value::string(nume);
+    json[U("category")] = value::string(categorie);
     json[U("buying_price")] = value::number(pretCumparare);
     json[U("selling_price")] = value::number(pretVanzare);
     return json;
@@ -89,4 +89,12 @@ void swap(Produs &p1, Produs &p2) {
 
 std::shared_ptr<JsonEntity> Produs::clone() const {
     return std::make_shared<Produs>(*this);
+}
+
+Produs::Produs(const Produs &other) {
+    id = other.id;
+    nume = other.nume;
+    categorie = other.categorie;
+    pretCumparare = other.pretCumparare;
+    pretVanzare = other.pretVanzare;
 }

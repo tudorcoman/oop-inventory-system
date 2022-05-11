@@ -120,5 +120,13 @@ std::shared_ptr<JsonEntity> Depozit::clone() const {
     return std::make_shared<Depozit>(*this);
 }
 
+Depozit::Depozit(const Depozit &other) {
+    nume = other.nume;
+    adresa = other.adresa;
+    stoc = other.stoc;
+    tranzactii = other.tranzactii;
+    manager = other.manager;
+}
+
 
 

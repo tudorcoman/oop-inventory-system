@@ -14,9 +14,11 @@ class DepoziteRepository: public CrudRepository<Depozit> {
     void _fetch_objects() override;
     std::map<int, Depozit> depozite;
     AngajatRepository angajatRepository;
+    static bool prepared_statements;
     friend class DepozitController;
 public:
     explicit DepoziteRepository(const AngajatRepository&  angajatRepository);
+    DepoziteRepository(const DepoziteRepository& other);
 
     [[nodiscard]] std::shared_ptr<Repository<Depozit>> clone() const override;
     bool opCreate(const Depozit& d) override;

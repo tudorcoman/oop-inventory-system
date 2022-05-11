@@ -2,10 +2,10 @@ name: C++ CI
 
 on:
   push:
-    branches: [main] # replace with main (if applicable)
+    branches: [misc/backend1] # replace with main (if applicable)
     tags: ['*']
   pull_request:
-    branches: [main] # replace with main (if applicable)
+    branches: [master] # replace with main (if applicable)
 
 jobs:
   build:
@@ -37,24 +37,24 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            c: clang-11
-            cxx: clang++-11
-            name: Ubuntu 20.04 Clang 11
+            c: clang-12
+            cxx: clang++-12
+            name: Ubuntu 20.04 Clang 12
             cmake_flags: -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             boost_link: static
             boost_toolset: clang
             boost_use_static: ON
             build_shared_libs: OFF
 
-          - os: ubuntu-20.04
-            c: clang-10
-            cxx: clang++-10
-            name: Ubuntu 20.04 Clang 10
-            # cmake_flags:
-            boost_link: static
-            boost_toolset: clang
-            boost_use_static: ON
-            build_shared_libs: OFF
+          # - os: ubuntu-20.04
+          #   c: clang-10
+          #   cxx: clang++-10
+          #   name: Ubuntu 20.04 Clang 10
+          #   # cmake_flags:
+          #   boost_link: static
+          #   boost_toolset: clang
+          #   boost_use_static: ON
+          #   build_shared_libs: OFF
 
           - os: ubuntu-20.04
             c: gcc-10
@@ -124,14 +124,14 @@ jobs:
 
       - name: Cache tools
         uses: actions/cache@v2
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
         id: cache-tools
         with:
           path: tools
           key: tools
 
       - name: Build tools
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11' && steps.cache-tools.outputs.cache-hit != 'true'
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12' && steps.cache-tools.outputs.cache-hit != 'true'
         run: |
           mkdir tools/
           wget https://github.com/danmar/cppcheck/archive/2.6.zip
@@ -145,7 +145,7 @@ jobs:
 
       - name: Install tools
         # this step is fast, no need for caching
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
         # build/install other tools in these steps
         run: |
           cd tools/cppcheck-2.6
@@ -219,7 +219,7 @@ jobs:
           repository: zlib-ng/zlib-ng
           ref: 2.0.6
           path: libs/zlib
-      
+
       - name: Build and install Zlib (Windows)
         if: steps.cache-openssl.outputs.cache-hit != 'true' && runner.os == 'Windows'
         working-directory: libs/zlib
@@ -277,7 +277,6 @@ jobs:
           chmod +x ./build_deps.sh
           ./build_deps.sh
 
-
       - name: Configure CMake (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
         run: |
@@ -300,6 +299,11 @@ jobs:
             -DGITHUB_ACTIONS=ON \
             ${{ matrix.cmake_flags }}
 
+      - name: Windows patch
+        if: runner.os == 'Windows'
+        run: |
+          cp build/libs/libpqxx/include/pqxx/*.h libs/libpqxx/include/pqxx/
+
       - name: Build
         # Execute the build using N jobs (-jN). You can specify a specific target with "--target <NAME>"
         run: cmake --build build --config $BUILD_TYPE -j6
@@ -311,7 +315,8 @@ jobs:
       - name: Copy pqxx dll
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
-          cp libs/libpqxx/build.release/install_dir/bin/pqxx.dll artifacts/bin/pqxx.dll
+          #cp libs/libpqxx/src/Debug/pqxx.dll artifacts/bin/pqxx.dll
+          #cp libs/libpqxx artifacts/bin/libpqxx
           cp $(where ucrtbased.dll) artifacts/bin/
           cp $(where VCRUNTIME140_1D.dll) artifacts/bin/
           cp $(where MSVCP140D.dll) artifacts/bin/
@@ -324,36 +329,37 @@ jobs:
           cp gcc/mingw64/bin/libstdc++-6.dll $GITHUB_WORKSPACE/artifacts/bin
 
       - name: Cppcheck
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
-        run: cppcheck --enable=all --project=build/compile_commands.json -ibuild --suppress='*:build/*' --suppress=missingIncludeSystem --suppress=unmatchedSuppression --error-exitcode=1
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
+        run: cppcheck --enable=all --project=build/compile_commands.json -ibuild --suppress='*:libs/*' --suppress='*:build/*' --suppress=missingIncludeSystem --suppress=unmatchedSuppression --error-exitcode=1
 
       - name: Clang-tidy
-        if: runner.os == 'Linux' && matrix.cxx == 'clang++-11'
+        if: runner.os == 'Linux' && matrix.cxx == 'clang++-12'
         # config from https://gist.github.com/jfm535/7581ccadbd539303d8bed2f46f973108
         run: |
           cat build/compile_commands.json |
             jq -r '.[] | .file' |           # select source file paths from CMake project; -r to strip quotes
             grep -v "/build/_deps/" |       # ignore external dependencies
+            grep -v "/libs/" |              # ignore external dependencies
             xargs clang-tidy -p build
 
-      - name: Sanitizers
-        # run one sanitizer for each OS to avoid extra binaries;
-        # memory on Linux clang, address on macOS clang
-        # if: runner.os != 'Windows'
-        if: startsWith(matrix.cxx, 'clang++')
-        # NOTE: update executable name if it is changed in CMakeLists.txt
-        # detect_leaks is not supported on macOS
-        # env:
-        # ASAN_OPTIONS: detect_leaks=1
-        run: |
-          cat date.txt | ./artifacts/bin/proj
+  #    - name: Sanitizers
+  #     # run one sanitizer for each OS to avoid extra binaries;
+  #     # memory on Linux clang, address on macOS clang
+  #     # if: runner.os != 'Windows'
+  #     if: startsWith(matrix.cxx, 'clang++')
+  #     # NOTE: update executable name if it is changed in CMakeLists.txt
+  #     # detect_leaks is not supported on macOS
+  #     # env:
+  #     # ASAN_OPTIONS: detect_leaks=1
+  #     run: |
+  #       cat date.txt | ./artifacts/bin/proj
 
-      - name: Valgrind
-        if: runner.os == 'Linux' && matrix.cxx == 'g++-10'
-        # NOTE: update executable name if it is changed in CMakeLists.txt
-        run: |
-          # remove --show-leak-kinds=all --track-origins=yes if there are many leaks in external libs
-          cat date.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/proj
+  #   - name: Valgrind
+  #     if: runner.os == 'Linux' && matrix.cxx == 'g++-10'
+  #     # NOTE: update executable name if it is changed in CMakeLists.txt
+  #     run: |
+  #       # remove --show-leak-kinds=all --track-origins=yes if there are many leaks in external libs
+  #       cat date.txt | valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1 ./artifacts/bin/proj
 
       - name: Move artifacts
         run: |

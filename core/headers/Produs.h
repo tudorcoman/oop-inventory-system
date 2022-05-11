@@ -15,8 +15,9 @@ class Produs: public JsonEntity {
     double pretCumparare{}, pretVanzare{};
 public:
     Produs() = default;
-
+    Produs(const Produs& other);
     explicit Produs(int id, std::string nume, std::string categorie, double pretCumparare, double pretVanzare);
+
     friend std::ostream& operator << (std::ostream& os, const Produs& p);
 
     [[nodiscard]] std::shared_ptr<JsonEntity> clone() const override;

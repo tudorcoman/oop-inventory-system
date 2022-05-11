@@ -11,9 +11,11 @@
 class ProdusRepository: public CrudRepository<Produs> {
     void _fetch_objects() override;
     static std::vector<Produs> _build_from_result(const result& res);
+    static bool prepared_statements;
     std::vector<Produs> produse;
 public:
     ProdusRepository();
+    ProdusRepository(const ProdusRepository& other);
 
     [[nodiscard]] std::shared_ptr<Repository<Produs>> clone() const override;
 

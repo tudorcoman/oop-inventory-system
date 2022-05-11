@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.15)
-
 project(oop)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -38,12 +37,22 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
 endif()
 
 set(CPPRESTSDK_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/libs/cpprestsdk/Release/include CACHE PATH "CPP Rest SDK include dir")
+#set(PQXX_INCLUDE_DIR_gen ${PROJECT_BINARY_DIR}/libpqxx/include CACHE PATH "PQXX include dir (generated)")
 set(PQXX_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/libs/libpqxx/include CACHE PATH "PQXX include dir")
 
-set(HEADER_SEARCH_PATHS ${CPPRESTSDK_INCLUDE_DIR} ${PQXX_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR})
+
+if(UNIX)
+    SET(BUILD_SHARED_LIBS OFF)
+else()
+    SET(BUILD_SHARED_LIBS ON)
+endif()
+set(SKIP_BUILD_TEST ON)
+add_subdirectory(libs/libpqxx)
+
+set(HEADER_SEARCH_PATHS ${CPPRESTSDK_INCLUDE_DIR} ${PQXX_INCLUDE_DIR_gen} ${PQXX_INCLUDE_DIR} ${Boost_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR})
 
 set(CPPRESTSDK_LIB_DIR ${PROJECT_SOURCE_DIR}/libs/cpprestsdk/build.release/Binaries CACHE PATH "CPP Rest SDK lib dir")
-set(PQXX_LIB_DIR ${PROJECT_SOURCE_DIR}/libs/libpqxx/build.release/src CACHE PATH "PQXX lib dir")
+#set(PQXX_LIB_DIR ${PROJECT_SOURCE_DIR}/libs/libpqxx/build.release/src CACHE PATH "PQXX lib dir")
 
 if(APPLE)
     if(NOT GITHUB_ACTIONS)
@@ -106,7 +115,7 @@ elseif(UNIX)
         # target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
         # target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
     elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-        if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "10.")
+        if("${CMAKE_CXX_COMPILER_VERSION}" MATCHES "12.")
             # check leaks on Linux since macOS does not support the leaks sanitizer yet
             # leaks sanitizer seems is enabled by default on Linux (according to docs),
             # so we do not enable it explicitly
@@ -143,7 +152,7 @@ elseif(UNIX)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBS} cpprest pqxx PostgreSQL::PostgreSQL)
 else()
     # link pqxx dynamically on windows
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBS} cpprest PostgreSQL::PostgreSQL)
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENSSL_LIBS} cpprest pqxx PostgreSQL::PostgreSQL)
 endif()
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

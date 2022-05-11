@@ -5,6 +5,7 @@
 #include "../headers/TranzactieRepository.h"
 #include "../../infra/headers/Utilities.h"
 
+bool TranzactieRepository::prepared_statements;
 TranzactieRepository::TranzactieRepository(DepoziteRepository depoziteRepository, ProdusRepository produsRepository): CrudRepository<Tranzactie, int>("tranzactii", std::vector<TableField>{TableField("id", TableField::INT),
                                                                                                                                                     TableField("product_id", TableField::INT),
                                                                                                                                                     TableField("depozit_id", TableField::INT),
@@ -12,10 +13,13 @@ TranzactieRepository::TranzactieRepository(DepoziteRepository depoziteRepository
                                                                                                                                                     TableField("tip", TableField::TEXT),
                                                                                                                                                     TableField("data_tranzactie", TableField::DATE)}),
                                                                                    depoziteRepository(std::move(depoziteRepository)), produsRepository(std::move(produsRepository)) {
-    prepareStatement("tranzactii_create_insert", "INSERT INTO " + getTable() +
-                                                                               " (product_id, depozit_id, quantity, tip, data_tranzactie) VALUES ($1, $2, $3, $4, $5::timestamp)");
-    prepareStatement("tranzactii_create_select", "SELECT id FROM " + getTable() +
-                                                                               " WHERE product_id=$1 AND depozit_id=$2 AND quantity=$3 AND tip=$4 AND data_tranzactie = $5::timestamp");
+    if(!prepared_statements) {
+        prepared_statements = true;
+        prepareStatement("tranzactii_create_insert", "INSERT INTO " + getTable() +
+                                                     " (product_id, depozit_id, quantity, tip, data_tranzactie) VALUES ($1, $2, $3, $4, $5::timestamp)");
+        prepareStatement("tranzactii_create_select", "SELECT id FROM " + getTable() +
+                                                     " WHERE product_id=$1 AND depozit_id=$2 AND quantity=$3 AND tip=$4 AND data_tranzactie = $5::timestamp");
+    }
 }
 
 void TranzactieRepository::_fetch_objects() {
@@ -71,10 +75,8 @@ std::vector<Tranzactie> TranzactieRepository::opRetrieve(std::map<std::string, s
     return _build_from_result(res, false);
 }
 
-bool TranzactieRepository::opUpdate(const int &id, const Tranzactie &t, int depozit_id) {
+bool TranzactieRepository::opUpdate(const int&, const Tranzactie&, int) {
     // tranzactiile sunt read-only
-    if (id == 0 || t.getId() == 0 || depozit_id == 0)
-        return false;
     return false;
 }
 
