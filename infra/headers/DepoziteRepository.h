@@ -25,7 +25,7 @@ public:
     std::vector<Depozit> opRetrieve(std::map<std::string, std::string> filters) override;
     bool opUpdate(const int& id, const Depozit& d) override;
     bool opDelete(const int& id) override;
-    Depozit getById(const int& id) override;
+    Depozit& getById(const int& id) override;
     int findDepozit(const Depozit& d);
 
     DepoziteRepository& operator = (const DepoziteRepository& other);

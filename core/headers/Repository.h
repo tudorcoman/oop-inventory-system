@@ -43,7 +43,7 @@ public:
     virtual std::shared_ptr<Repository<T>> clone() const = 0;
     virtual std::vector<T> opRetrieve(std::map<std::string, std::string> filters) = 0;
     virtual bool opDelete(const int& id) = 0;
-    virtual T getById(const int& id) = 0;
+    virtual T& getById(const int& id) = 0;
 
     virtual ~Repository() = default;
 };

@@ -23,7 +23,7 @@ public:
     std::vector<Produs> opRetrieve(std::map<std::string, std::string> filters) override;
     bool opUpdate(const int& id, const Produs& p) override;
     bool opDelete(const int& id) override;
-    Produs getById(const int& id) override;
+    Produs& getById(const int& id) override;
 
     ProdusRepository& operator = (const ProdusRepository& other);
     ~ProdusRepository() override = default;

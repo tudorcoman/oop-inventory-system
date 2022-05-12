@@ -106,7 +106,7 @@ bool TranzactieRepository::opDelete(const int &id) {
     }
 }
 
-Tranzactie TranzactieRepository::getById(const int &id) {
+Tranzactie& TranzactieRepository::getById(const int &id) {
     if (!fetched_objects) {
         _fetch_objects();
     }
