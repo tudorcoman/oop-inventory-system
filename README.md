@@ -25,26 +25,26 @@
 #### Cerințe
 - [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
 - [ ] moșteniri
-  - [ ] funcții virtuale (pure), constructori virtuali (clone)
-  - [ ] apelarea constructorului din clasa de bază 
-  - [ ] smart pointers
+  - [x] funcții virtuale (pure), constructori virtuali (clone)
+  - [x] apelarea constructorului din clasa de bază 
+  - [x] smart pointers
   - [ ] `dynamic_cast`
-- [ ] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
-- [ ] excepții
-  - [ ] ierarhie proprie (cu baza `std::exception` sau derivată din `std::exception`)
-  - [ ] utilizare cu sens: de exemplu, `throw` în constructor, `try`/`catch` în `main`
-- [ ] funcții și atribute `static`
-- [ ] STL
-- [ ] cât mai multe `const`
+- [x] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
+- [x] excepții
+  - [x] ierarhie proprie (cu baza `std::exception` sau derivată din `std::exception`)
+  - [x] utilizare cu sens: de exemplu, `throw` în constructor, `try`/`catch` în `main`
+- [x] funcții și atribute `static`
+- [x] STL
+- [x] cât mai multe `const`
 - [ ] tag de `git`: de exemplu `v0.2`
 
 ## Tema 3
 
 #### Cerințe
-- [ ] 2 șabloane de proiectare (design patterns)
-- [ ] o funcție șablon (template) cu sens; minim 2 instanțieri
-- [ ] o clasă șablon cu sens; minim 2 instanțieri
-- [ ] o specializare pe funcție/clasă șablon
+- [x] 2 șabloane de proiectare (design patterns)
+- [x] o funcție șablon (template) cu sens; minim 2 instanțieri
+- [x] o clasă șablon cu sens; minim 2 instanțieri
+- [x] o specializare pe funcție/clasă șablon
 - [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
 
 ## Resurse
