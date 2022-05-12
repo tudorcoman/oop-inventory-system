@@ -17,6 +17,7 @@ public:
     explicit ProdusController(const std::string& path);
     void handle_get(const http_request& req) override;
     void handle_post(const http_request& req) override;
+    void handle_put(const http_request& req) override;
     void handle_delete(const http_request& req) override;
     ProdusController& operator = (const ProdusController& other) = default;
     std::shared_ptr<Controller> clone() const override;

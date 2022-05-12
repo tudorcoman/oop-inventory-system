@@ -27,22 +27,34 @@ void DepozitController::handle_post(const http_request &req) {
         req.reply(status_codes::BadRequest, "bad manager id");
     }
 
-    if (json.has_number_field(U("id"))) {
-        // update operation
-        const int id = json[U("id")].as_integer();
-        std::string message = "Depozitul cu id = " + std::to_string(id);
-        if (depoziteRepository.opUpdate(id, d)) {
-            req.reply(status_codes::OK, message + " a fost actualizat");
-        } else {
-            throw InternalErrorException(message + " nu a putut fi actualizat");
-        }
+    if (depoziteRepository.opCreate(d)) {
+        req.reply(status_codes::OK, "Depozit creat");
     } else {
-        // create operation
-        if (depoziteRepository.opCreate(d)) {
-            req.reply(status_codes::OK, "Depozit creat");
-        } else {
-            throw InternalErrorException("Depozitul nu a putut fi creat");
-        }
+        throw InternalErrorException("Depozitul nu a putut fi creat");
+    }
+}
+
+void DepozitController::handle_put(const http_request &req) {
+    pplx::task<web::json::value> jsonTask = req.extract_json();
+    web::json::value json = jsonTask.get();
+    Depozit d;
+    d.fromJson(json);
+
+    try {
+        int mgr_id = json[U("manager")].as_integer();
+        Angajat manager = depoziteRepository.angajatRepository.getById(mgr_id);
+        d.setManager(std::make_shared<Angajat>(manager));
+    } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        req.reply(status_codes::BadRequest, "bad manager id");
+    }
+
+    const int id = json[U("id")].as_integer();
+    std::string message = "Depozitul cu id = " + std::to_string(id);
+    if (depoziteRepository.opUpdate(id, d)) {
+        req.reply(status_codes::OK, message + " a fost actualizat");
+    } else {
+        throw InternalErrorException(message + " nu a putut fi actualizat");
     }
 }
 

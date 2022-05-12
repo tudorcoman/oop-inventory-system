@@ -26,22 +26,35 @@ void AngajatController::handle_post(const http_request &req) {
         req.reply(status_codes::BadRequest, "bad manager id");
     }
 
-    if (json.has_number_field(U("id"))) {
-        // update operation
-        const int id = json[U("id")].as_integer();
-        std::string message = "Angajatul cu id = " + std::to_string(id);
-        if (angajatRepository.opUpdate(id, a, mgr_id)) {
-            req.reply(status_codes::OK, message + " a fost actualizat");
-        } else {
-            throw InternalErrorException(message + " nu a putut fi actualizat");
-        }
+    if (angajatRepository.opCreate(a, mgr_id)) {
+        req.reply(status_codes::OK, "Angajat creat");
     } else {
-        // create operation
-        if (angajatRepository.opCreate(a, mgr_id)) {
-            req.reply(status_codes::OK, "Angajat creat");
-        } else {
-            throw InternalErrorException("Angajatul nu a putut fi actualizat");
-        }
+        throw InternalErrorException("Angajatul nu a putut fi creat");
+    }
+}
+
+void AngajatController::handle_put(const http_request &req) {
+    pplx::task<web::json::value> jsonTask = req.extract_json();
+    web::json::value json = jsonTask.get();
+    Angajat a;
+    a.fromJson(json);
+    int mgr_id = -1;
+
+    try {
+        mgr_id = json[U("manager_id")].as_integer();
+        Angajat manager = angajatRepository.getById(mgr_id);
+        a.setManager(std::make_shared<Angajat>(manager));
+    } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        req.reply(status_codes::BadRequest, "bad manager id");
+    }
+
+    const int id = json[U("id")].as_integer();
+    std::string message = "Angajatul cu id = " + std::to_string(id);
+    if (angajatRepository.opUpdate(id, a, mgr_id)) {
+        req.reply(status_codes::OK, message + " a fost actualizat");
+    } else {
+        throw InternalErrorException(message + " nu a putut fi actualizat");
     }
 }
 
