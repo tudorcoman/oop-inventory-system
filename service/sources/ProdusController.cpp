@@ -37,6 +37,7 @@ void ProdusController::handle_put(const http_request &req) {
         produsRepository.opUpdate(p.getId(), p);
         req.reply(status_codes::OK, "Produsul a fost actualizat");
     } catch(const IdNotFoundException& e) {
+        std::cerr << e.what() << std::endl;
         throw InternalErrorException("Produsul care trebuie actualizat nu exista");
     }
 }
@@ -55,7 +56,6 @@ void ProdusController::handle_delete(const http_request &req) {
             if (produsRepository.opDelete(p.getId())) {
                 req.reply(status_codes::OK, "Produsul a fost sters");
             } else {
-
                 req.reply(status_codes::InternalError, "Produsul nu a putut fi sters");
             }
         }

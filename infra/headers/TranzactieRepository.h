@@ -28,7 +28,7 @@ public:
     std::vector<Tranzactie> opRetrieve(std::map<std::string, std::string> filters) override;
     bool opUpdate(const int& id, const Tranzactie& t, int depozit_id) override;
     bool opDelete(const int& id) override;
-    Tranzactie getById(const int& id) override;
+    Tranzactie& getById(const int& id) override;
 
     TranzactieRepository& operator = (const TranzactieRepository& other) = default;
     ~TranzactieRepository() override = default;

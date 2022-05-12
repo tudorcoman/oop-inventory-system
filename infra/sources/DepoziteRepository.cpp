@@ -102,7 +102,7 @@ bool DepoziteRepository::opDelete(const int &id) {
     }
 }
 
-Depozit DepoziteRepository::getById(const int &id) {
+Depozit& DepoziteRepository::getById(const int &id) {
     if (!fetched_objects) {
         _fetch_objects();
     }
