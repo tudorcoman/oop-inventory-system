@@ -60,6 +60,7 @@ bool TranzactieRepository::opCreate(const Tranzactie &t, int depozit_id) {
 
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -100,6 +101,7 @@ bool TranzactieRepository::opDelete(const int &id) {
         const int depozit_id = res.begin()[0].as<int>();
         return opCreate(antagonic, depozit_id);
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }

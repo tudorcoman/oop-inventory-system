@@ -8,7 +8,7 @@ TranzactieController::TranzactieController(const std::string &path, const Depozi
                                            const ProdusRepository &produsRepository): Controller(path), tranzactieRepository(depozitRepository, produsRepository) { }
 
 void TranzactieController::handle_get(const http_request &req) {
-    std::map<std::string, std::string> http_get_vars = uri::split_query(req.request_uri().query());
+    std::map<utility::string_t, utility::string_t> http_get_vars = uri::split_query(req.request_uri().query());
     auto output = Utilities::getJsonArray<Tranzactie>(&tranzactieRepository, http_get_vars);
     req.reply(status_codes::OK, output);
 }
@@ -24,6 +24,7 @@ void TranzactieController::handle_post(const http_request &req) {
     try {
         depozit_id = json[U("depozit_id")].as_integer();
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         req.reply(status_codes::InternalError, "bad depozit id");
     }
 
@@ -53,6 +54,7 @@ void TranzactieController::handle_delete(const http_request &req) {
             }
         }
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         req.reply(status_codes::NotFound, "Tranzactia cu id-ul respectiv nu exista");
     }
 }

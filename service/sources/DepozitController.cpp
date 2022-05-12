@@ -7,7 +7,7 @@
 #include <utility>
 
 void DepozitController::handle_get(const http_request &req) {
-    std::map<std::string, std::string> http_get_vars = uri::split_query(req.request_uri().query());
+    std::map<utility::string_t, utility::string_t> http_get_vars = uri::split_query(req.request_uri().query());
     auto output = Utilities::getJsonArray<Depozit>(&depoziteRepository, http_get_vars);
     req.reply(status_codes::OK, output);
 }
@@ -23,10 +23,11 @@ void DepozitController::handle_post(const http_request &req) {
         Angajat manager = depoziteRepository.angajatRepository.getById(mgr_id);
         d.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         req.reply(status_codes::BadRequest, "bad manager id");
     }
 
-    if (json.has_number_field("id")) {
+    if (json.has_number_field(U("id"))) {
         // update operation
         const int id = json[U("id")].as_integer();
         std::string message = "Depozitul cu id = " + std::to_string(id);
@@ -56,6 +57,7 @@ void DepozitController::handle_delete(const http_request &req) {
         Angajat manager = depoziteRepository.angajatRepository.getById(mgr_id);
         d.setManager(std::make_shared<Angajat>(manager));
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         req.reply(status_codes::BadRequest, "bad manager id");
     }
 

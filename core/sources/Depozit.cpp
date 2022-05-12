@@ -70,8 +70,8 @@ const std::shared_ptr<Angajat> &Depozit::getManager() const {
 web::json::value Depozit::getJson() const {
     using namespace web::json;
     value json;
-    json[U("nume")] = value::string(U(nume));
-    json[U("adresa")] = value::string(U(adresa));
+    json[U("nume")] = value::string(utility::conversions::to_string_t(nume));
+    json[U("adresa")] = value::string(utility::conversions::to_string_t(adresa));
     json[U("manager")] = manager->getJson();
     json[U("stoc")] = value::array();
     int i = 0;
@@ -89,8 +89,8 @@ web::json::value Depozit::getJson() const {
 }
 
 void Depozit::fromJson(web::json::value obj) {
-    this->nume = obj[U("nume")].as_string();
-    this->adresa = obj[U("adresa")].as_string();
+    this->nume = utility::conversions::to_utf8string(obj[U("nume")].as_string());
+    this->adresa = utility::conversions::to_utf8string(obj[U("adresa")].as_string());
 }
 
 Depozit::Depozit(): nume(""), adresa(""), manager(std::shared_ptr<Angajat>()) { }

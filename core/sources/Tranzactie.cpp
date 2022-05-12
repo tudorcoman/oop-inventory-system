@@ -44,17 +44,17 @@ web::json::value Tranzactie::getJson() const {
     json[U("id")] = value::number(id);
     json[U("produs")] = produs.getJson();
     json[U("quantity")] = value::number(quantity);
-    json[U("tip")] = value::string(tip == Tranzactie::Type::IN ? "IN" : "OUT");
-    json[U("timestamp")] = value::string(Utilities::getStringFromDate(timestamp));
+    json[U("tip")] = value::string(utility::conversions::to_string_t(tip == Tranzactie::Type::IN ? "IN" : "OUT"));
+    json[U("timestamp")] = value::string(utility::conversions::to_string_t(Utilities::getStringFromDate(timestamp)));
     return json;
 }
 
 void Tranzactie::fromJson(web::json::value obj) {
-    if (obj.has_integer_field("id"))
+    if (obj.has_integer_field(U("id")))
         this->id = obj[U("id")].as_integer();
     this->quantity = obj[U("quantity")].as_double();
-    this->tip = (obj[U("tip")].as_string() == "IN") ? Tranzactie::Type::IN : Tranzactie::Type::OUT;
-    this->timestamp = boost::posix_time::time_from_string(obj[U("data_tranzactie")].as_string());
+    this->tip = (utility::conversions::to_utf8string(obj[U("tip")].as_string()) == "IN") ? Tranzactie::Type::IN : Tranzactie::Type::OUT;
+    this->timestamp = boost::posix_time::time_from_string(utility::conversions::to_utf8string(obj[U("data_tranzactie")].as_string()));
 }
 
 bool Tranzactie::operator==(const Tranzactie &rhs) const {

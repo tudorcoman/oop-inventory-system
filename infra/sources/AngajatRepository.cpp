@@ -43,6 +43,7 @@ bool AngajatRepository::opCreate(const Angajat &a, int manager_id) {
 
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -75,6 +76,7 @@ bool AngajatRepository::opUpdate(const int &id, const Angajat &a, int manager_id
         executePrepared("angajati_update", a.getFirstName(), a.getLastName(), a.getCnp(), manager_id, id);
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -90,6 +92,7 @@ bool AngajatRepository::opDelete(const int &id) {
         CrudRepository<Angajat, int>::_run_working_query(query);
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }

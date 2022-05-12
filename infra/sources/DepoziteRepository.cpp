@@ -47,6 +47,7 @@ bool DepoziteRepository::opCreate(const Depozit &d) {
 
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -82,6 +83,7 @@ bool DepoziteRepository::opUpdate(const int &id, const Depozit &d) {
         executePrepared("depozite_update", d.getNume(), d.getAdresa(), angajatRepository.findAngajat(*d.getManager()));
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -95,6 +97,7 @@ bool DepoziteRepository::opDelete(const int &id) {
         CrudRepository<Depozit>::_run_working_query(query);
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }

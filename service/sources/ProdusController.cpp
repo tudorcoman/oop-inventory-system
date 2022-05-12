@@ -7,7 +7,7 @@
 ProdusController::ProdusController(const std::string &path) : Controller(path) { }
 
 void ProdusController::handle_get(const http_request &req) {
-    std::map<std::string, std::string> http_get_vars = uri::split_query(req.request_uri().query());
+    std::map<utility::string_t, utility::string_t> http_get_vars = uri::split_query(req.request_uri().query());
     auto output = Utilities::getJsonArray<Produs>(&produsRepository, http_get_vars);
     req.reply(status_codes::OK, output);
 }
@@ -23,9 +23,11 @@ void ProdusController::handle_post(const http_request &req) {
         produsRepository.opUpdate(p.getId(), p);
         req.reply(status_codes::OK, "Produsul a fost actualizat");
     } catch(const IdNotFoundException& e) {
+        std::cerr << e.what() << std::endl;
         produsRepository.opCreate(p);
         req.reply(status_codes::OK, "Produsul a fost creat");
     } catch(const std::runtime_error& e) {
+        std::cerr << e.what() << std::endl;
         throw InternalErrorException("Produsul nu a putut fi creat/actualizat");
     }
 }
@@ -49,8 +51,10 @@ void ProdusController::handle_delete(const http_request &req) {
             }
         }
     } catch(const IdNotFoundException& e) {
+        std::cerr << e.what() << std::endl;
         req.reply(status_codes::NotFound, "Produsul cu id-ul respectiv nu exista");
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         req.reply(status_codes::InternalError, "Produsul nu a putut fi sters");
     }
 }

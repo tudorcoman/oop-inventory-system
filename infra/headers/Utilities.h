@@ -19,7 +19,7 @@ public:
 
         while(end != std::string::npos) {
             result.push_back(s.substr(start, end - start));
-            start = end + (unsigned int)delim.length();
+            start = static_cast<unsigned int>(end + delim.length());
             end = s.find(delim, start);
         }
 
@@ -28,14 +28,19 @@ public:
     }
 
     template<class T>
-    static web::json::value getJsonArray(Repository<T>* repo, std::map<std::string, std::string> filters) {
+    static web::json::value getJsonArray(Repository<T>* repo, const std::map<utility::string_t, utility::string_t>& filters) {
         /*  Thank you https://stackoverflow.com/questions/4984502/how-to-force-template-class-to-be-derived-from-baseclassa */
 
         static_assert(std::is_base_of<JsonEntity, T>::value, "Entity must be a JsonEntity");
         // static_assert(std::is_base_of<JsonEntity, T>::_v, "Entity must be a JsonEntity"); --> da eroare de compilare (error: no member named '_v' in 'std::__1::is_base_of<JsonEntity, Produs>')
         // static_assert(std::derived_from<T, JsonEntity>, "Entity must be a JsonEntity"); --> da eroare de compilare (error: no member named 'derived_from' in namespace 'std')
 
-        const std::vector<T> obj = repo->opRetrieve(filters);
+        std::map<std::string, std::string> map_filters;
+        for (const auto& it: filters) {
+            map_filters[utility::conversions::to_utf8string(it.first)] = utility::conversions::to_utf8string(it.second);
+        }
+
+        const std::vector<T> obj = repo->opRetrieve(map_filters);
         web::json::value output = web::json::value::array();
 
         for (unsigned i = 0; i < obj.size(); i ++) {

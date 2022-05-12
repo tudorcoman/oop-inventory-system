@@ -51,6 +51,7 @@ bool ProdusRepository::opCreate(const Produs &p) {
 
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -77,6 +78,7 @@ bool ProdusRepository::opUpdate(const int &id, const Produs &p) {
         executePrepared("produse_update", new_product.getNume(), new_product.getCategorie(), new_product.getPretCumparare(), new_product.getPretVanzare());
         return true;
      } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }
@@ -91,6 +93,7 @@ bool ProdusRepository::opDelete(const int &id) {
         CrudRepository<Produs>::_run_working_query(query);
         return true;
     } catch(const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }

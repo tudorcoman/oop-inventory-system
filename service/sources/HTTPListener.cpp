@@ -8,7 +8,7 @@
 using namespace std::placeholders;
 
 void HTTPListener::handle_request(const http_request& message, const method& metoda) const {
-    const std::vector<std::string> path_tokens = Utilities::string_split(message.to_string(), " ");
+    const std::vector<std::string> path_tokens = Utilities::string_split(utility::conversions::to_utf8string(message.to_string()), " ");
     if (path_tokens.size() < 2) {
         throw IncorrectUrlPathException();
     }
@@ -44,7 +44,7 @@ HTTPListener::HTTPListener(const std::string &host, const std::string &url, cons
         handlers[make_pair(std::get<1>(it), std::get<0>(it))] = std::get<2>(it);
     }
 
-    listener = web::http::experimental::listener::http_listener(U(host + url));
+    listener = web::http::experimental::listener::http_listener(http::uri::encode_uri(utility::conversions::to_string_t(host + url)));
 
     for(const auto& tip: matching) {
         auto fp = std::bind(&HTTPListener::handle_req, this, _1, tip.first, matching);

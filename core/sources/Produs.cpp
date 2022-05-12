@@ -55,20 +55,21 @@ web::json::value Produs::getJson() const {
     using namespace web::json;
     value json;
     json[U("id")] = value::number(id);
-    json[U("name")] = value::string(nume);
-    json[U("category")] = value::string(categorie);
+    json[U("name")] = value::string(utility::conversions::to_string_t(nume));
+    json[U("category")] = value::string(utility::conversions::to_string_t(categorie));
     json[U("buying_price")] = value::number(pretCumparare);
     json[U("selling_price")] = value::number(pretVanzare);
+
     return json;
 }
 
 void Produs::fromJson(web::json::value obj) {
-    if (obj.has_integer_field("id"))
+    if (obj.has_integer_field(U("id")))
         this->id = obj[U("id")].as_integer();
     else
         this->id = 0;
-    this->nume = obj[U("name")].as_string();
-    this->categorie = obj[U("category")].as_string();
+    this->nume = std::string(utility::conversions::to_utf8string(obj[U("name")].as_string()));
+    this->categorie = std::string(utility::conversions::to_utf8string(obj[U("category")].as_string()));
     this->pretCumparare = obj[U("buying_price")].as_double();
     this->pretVanzare = obj[U("selling_price")].as_double();
 }
