@@ -61,8 +61,8 @@ public:
     static bool containsNonAlphaChars(const std::string& s) {
         for (auto ch: s)
             if (!isalpha(ch))
-                return false;
-        return true;
+                return true;
+        return false;
     }
 };
 #endif //OOP_UTILITIES_H

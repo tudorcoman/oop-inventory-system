@@ -322,6 +322,10 @@ jobs:
           cp $(where MSVCP140D.dll) artifacts/bin/
           cp $(where VCRUNTIME140D.dll) artifacts/bin/
           cp libs/cpprestsdk/build.release/Binaries/Release/cpprest143_2_10.dll artifacts/bin/
+          cp C:/Program\ Files/OpenSSL/bin/libcrypto-1_1-x64.dll artifacts/bin/
+          cp C:/Program\ Files/OpenSSL/bin/libssl-1_1-x64.dll artifacts/bin/
+          cp C:/Program\ Files/OpenSSL/bin/libcrypto-1_1-x64.pdb artifacts/bin/
+          cp C:/Program\ Files/OpenSSL/bin/libssl-1_1-x64.pdb artifacts/bin/
 
       - name: Copy stdlib (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
