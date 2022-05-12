@@ -312,7 +312,7 @@ jobs:
         # Use CMake to "install" build artifacts (only interested in CMake registered targets) to our custom artifacts directory
         run: cmake --install build --config $BUILD_TYPE --prefix artifacts
 
-      - name: Copy pqxx dll
+      - name: Copy dlls
         if: runner.os == 'Windows' && matrix.cxx == 'cl'
         run: |
           #cp libs/libpqxx/src/Debug/pqxx.dll artifacts/bin/pqxx.dll
@@ -321,6 +321,7 @@ jobs:
           cp $(where VCRUNTIME140_1D.dll) artifacts/bin/
           cp $(where MSVCP140D.dll) artifacts/bin/
           cp $(where VCRUNTIME140D.dll) artifacts/bin/
+          cp libs/cpprestsdk/build.release/Binaries/Release/cpprest143_2_10.dll artifacts/bin/
 
       - name: Copy stdlib (MinGW)
         if: runner.os == 'Windows' && matrix.cxx == 'g++'
