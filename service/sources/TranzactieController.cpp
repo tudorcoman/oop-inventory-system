@@ -35,6 +35,10 @@ void TranzactieController::handle_post(const http_request &req) {
     }
 }
 
+void TranzactieController::handle_put(const http_request &req) {
+    req.reply(status_codes::BadRequest, "Tranzactiile sunt read-only");
+}
+
 void TranzactieController::handle_delete(const http_request &req) {
     pplx::task<web::json::value> jsonTask = req.extract_json();
     web::json::value json = jsonTask.get();

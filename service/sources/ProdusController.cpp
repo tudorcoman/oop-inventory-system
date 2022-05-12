@@ -19,16 +19,25 @@ void ProdusController::handle_post(const http_request &req) {
     p.fromJson(json);
 
     try {
-        // update operation
-        produsRepository.opUpdate(p.getId(), p);
-        req.reply(status_codes::OK, "Produsul a fost actualizat");
-    } catch(const IdNotFoundException& e) {
-        std::cerr << e.what() << std::endl;
         produsRepository.opCreate(p);
         req.reply(status_codes::OK, "Produsul a fost creat");
     } catch(const std::runtime_error& e) {
         std::cerr << e.what() << std::endl;
-        throw InternalErrorException("Produsul nu a putut fi creat/actualizat");
+        throw InternalErrorException("Produsul nu a putut fi creat");
+    }
+}
+
+void ProdusController::handle_put(const http_request &req) {
+    pplx::task<web::json::value> jsonTask = req.extract_json();
+    web::json::value json = jsonTask.get();
+    Produs p;
+    p.fromJson(json);
+
+    try {
+        produsRepository.opUpdate(p.getId(), p);
+        req.reply(status_codes::OK, "Produsul a fost actualizat");
+    } catch(const IdNotFoundException& e) {
+        throw InternalErrorException("Produsul care trebuie actualizat nu exista");
     }
 }
 
